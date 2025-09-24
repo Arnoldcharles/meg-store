@@ -16,11 +16,11 @@ export type Product = {
 export const products: Product[] = [
   {
     id: "1",
-    name: "Wireless Headphones",
-    image: "/products/headphones.png",
-    description: "High-quality wireless headphones with noise cancellation.",
-    price: 120,
-    category: "Electronics",
+    name: "Red oil",
+    image: "/products/red oil 1.png",
+    description: "High-quality red oil with a rich flavor.",
+    price: 2200,
+    category: "Oil",
     stock: 10,
     bestSeller: false,
     createdAt: "2025-09-22T14:30:00Z",
