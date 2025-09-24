@@ -20,7 +20,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Image
-              src="/logo.png" // 🔹 Place your logo in /public
+              src="/logo.png"
               alt="Meg Store Logo"
               width={40}
               height={40}
@@ -45,15 +45,15 @@ export default function Footer() {
             </li>
             <li>
               <Link
-                href="/categories"
+                href="/products"
                 className="hover:text-green-400 transition"
               >
-                Categories
+                Shop
               </Link>
             </li>
             <li>
-              <Link href="/deals" className="hover:text-green-400 transition">
-                Deals
+              <Link href="/about" className="hover:text-green-400 transition">
+                About
               </Link>
             </li>
             <li>
@@ -117,14 +117,14 @@ export default function Footer() {
           </h3>
           <div className="flex flex-col sm:flex-row gap-4">
             <Image
-              src="/google-play.png" // 🔹 Place in /public
+              src="/google-play.png"
               alt="Google Play"
               width={140}
               height={40}
               className="cursor-pointer hover:opacity-80"
             />
             <Image
-              src="/app-store.png" // 🔹 Place in /public
+              src="/app-store.png"
               alt="App Store"
               width={140}
               height={40}
