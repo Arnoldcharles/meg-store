@@ -171,7 +171,7 @@ export default function AboutPage() {
           deals!
         </p>
         <a
-          href="/newsletter"
+          href="/"
           className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
         >
           Subscribe Now

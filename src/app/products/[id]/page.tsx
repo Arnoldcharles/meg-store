@@ -138,7 +138,7 @@ export default function ProductDetailsPage() {
                   />
                   <h3 className="font-semibold mt-2">{item.name}</h3>
                   <p className="text-green-600 font-bold">
-                    ${item.price.toFixed(2)}
+                    ₦{item.price.toFixed(2)}
                   </p>
                 </Link>
               </motion.div>
