@@ -12,7 +12,6 @@ export type Product = {
   createdAt?: string; // ISO date string
 };
 
-// 🛍️ Local Product Database
 export const products: Product[] = [
   {
     id: "1",
@@ -27,14 +26,14 @@ export const products: Product[] = [
   },
   {
     id: "2",
-    name: "Running Shoes",
-    image: "/products/shoes.png",
-    description: "Lightweight running shoes for everyday comfort.",
-    price: 80,
-    category: "Fashion",
+    name: "Eva Bottle of Refilled Groundnut Oil (Ororo)",
+    image: "/products/Eva Bottle of Refilled Groundnut Oil (Ororo).png",
+    description: "Pure and healthy groundnut oil for cooking.",
+    price: 1400,
+    category: "Oil",
     stock: 25,
     bestSeller: true,
-    createdAt: "2025-09-20T10:00:00Z",
+    createdAt: "2025-09-24T10:11:00Z",
   },
   {
     id: "3",
