@@ -60,7 +60,7 @@ export default function ProductsPage() {
     setTimeout(() => {
       setVisibleCount((prev) => prev + 4);
       setLoading(false);
-    }, 1000);
+    }, 2200);
   };
 
   return (

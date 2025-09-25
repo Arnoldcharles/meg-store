@@ -44,7 +44,7 @@ export default function ProductDetailsPage() {
     setTimeout(() => {
       addToCart({ ...(product as Product), quantity: 1 } as CartProduct);
       setAdding(false);
-    }, 1200);
+    }, 2200);
   };
 
   if (loading) {
