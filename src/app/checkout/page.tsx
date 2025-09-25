@@ -104,7 +104,7 @@ export default function CheckoutPage() {
             })
             .catch((err) => {
               console.error("SendGrid email error:", err);
-              alert("Payment successful, but failed to send email to admin.");
+              alert("Payment successful, but failed to send email to admin. Please contact support.");
             })
             .finally(() => setLoading(false));
         } else {
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
             className="w-full p-3 border rounded"
           />
           <input
-            type="text"
+            type="number"
             name="phone"
             value={form.phone}
             onChange={handleChange}
