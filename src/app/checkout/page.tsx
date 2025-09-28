@@ -104,7 +104,9 @@ export default function CheckoutPage() {
             })
             .catch((err) => {
               console.error("SendGrid email error:", err);
-              alert("Payment successful, but failed to send email to admin. Please contact support.");
+              alert(
+                "Payment successful, but failed to send order to admin. Please contact support."
+              );
             })
             .finally(() => setLoading(false));
         } else {

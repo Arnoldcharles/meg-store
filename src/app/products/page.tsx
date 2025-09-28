@@ -262,7 +262,7 @@ export default function ProductsPage() {
               }`}
             >
               <Image
-                src={product.image}
+                src={product.image || "/placeholder.jpg"}
                 alt={product.name}
                 width={200}
                 height={200}

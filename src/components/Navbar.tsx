@@ -30,7 +30,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-            <Image src="/logo.png" alt="Meg Store" width={40} height={40} />
+            <Image src="/hero3.png" alt="Meg Store" width={40} height={40} />
             <span className="hidden md:block">Meg Store</span>
           </Link>
 

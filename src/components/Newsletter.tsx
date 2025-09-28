@@ -17,7 +17,7 @@ export default function Newsletter() {
       return;
     }
 
-    // Simulate saving email (API or Firebase can go here)
+    
     setTimeout(() => {
       setMessage("🎉 Thank you for subscribing!");
       setEmail("");

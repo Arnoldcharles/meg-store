@@ -20,7 +20,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Image
-              src="/logo.png"
+              src="/hero4.png"
               alt="Meg Store Logo"
               width={40}
               height={40}

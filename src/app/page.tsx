@@ -18,7 +18,6 @@ export default function HomePage() {
       {/*<DealsOfTheDay />*/}
       <NewArrivals />
       <Newsletter />
-      {/* Add other sections below */}
     </main>
   );
 }

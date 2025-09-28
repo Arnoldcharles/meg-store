@@ -65,7 +65,7 @@ export default function ProductDetailsPage() {
           transition={{ duration: 0.5 }}
         >
           <Image
-            src={product?.image || "/placeholder.png"}
+            src={product?.image || "/placeholder.jpg"}
             alt={product?.name || "Product"}
             width={500}
             height={500}
@@ -130,7 +130,7 @@ export default function ProductDetailsPage() {
               >
                 <Link href={`/products/${item.id}`}>
                   <Image
-                    src={item.image}
+                    src={item.image || "/placeholder.jpg"}
                     alt={item.name}
                     width={200}
                     height={200}

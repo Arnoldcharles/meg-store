@@ -44,7 +44,7 @@ export default function FeaturedProducts() {
             >
               <div className="bg-gray-50 shadow-md rounded-xl p-6 max-w-md mx-auto flex flex-col items-center">
                 <Image
-                  src={product.image}
+                  src={product.image || "/placeholder.jpg"}
                   alt={product.name}
                   width={300}
                   height={200}

@@ -66,7 +66,7 @@ export default function Hero() {
                   className="flex items-center gap-4 border-b py-2 last:border-b-0 hover:bg-gray-100 rounded-lg transition"
                 >
                   <img
-                    src={p.image}
+                    src={p.image || "/placeholder.jpg"}
                     alt={p.name}
                     className="w-12 h-12 rounded-md object-cover"
                   />
@@ -105,7 +105,7 @@ export default function Hero() {
         className="flex-1 flex justify-center z-10"
       >
         <Image
-          src="/hero.png"
+          src="/hero2.png"
           alt="Shopping Illustration"
           width={350}
           height={350}

@@ -14,7 +14,7 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: "1",
+    id: "1354920147",
     name: "Red oil",
     image: "/products/red oil 1.png",
     description: "High-quality red oil with a rich flavor.",
@@ -36,9 +36,9 @@ export const products: Product[] = [
     createdAt: "2025-09-24T10:11:00Z",
   },
   {
-    id: "3",
+    id: "33275687",
     name: "Stockfish Head (Okporoko)",
-    image: "/products/stockfish.png",
+    image: "",
     description: "High-quality stockfish for your cooking needs.",
     price: 500,
     category: "Fish",
@@ -82,7 +82,7 @@ export const products: Product[] = [
   {
     id: "7",
     name: "Stockfish Head (Okporoko)",
-    image: "/products/stockfish.png",
+    image: "",
     description: "High-quality stockfish for your cooking needs.",
     price: 500,
     category: "Fish",

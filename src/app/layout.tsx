@@ -22,7 +22,7 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <Navbar />
-            <div className="pt-20">{children}</div>
+            <div className="pt-16">{children}</div>
             <Footer />
           </CartProvider>
         </AuthProvider>

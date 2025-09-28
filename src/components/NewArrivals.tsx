@@ -21,7 +21,10 @@ export default function NewArrivals() {
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
           🆕 New Arrivals
         </h2>
-        <p className="text-gray-500 mt-4">No new arrivals at the moment.</p>
+        <p className="text-gray-500 mt-4">
+          No new arrivals at the moment. <br /> Subscribe to our newsletter to
+          get updated on new arrivals
+        </p>
       </section>
     );
   }
