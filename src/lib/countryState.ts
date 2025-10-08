@@ -1,6 +1,6 @@
 const countryStateData = {
   countries: [
-    { name: "Nigeria", states: ["Lagos", "Abuja", "Kano"] },
+    { name: "Nigeria", states: ["Lagos"] },
   ],
 };
 export default countryStateData;
