@@ -64,7 +64,7 @@ export default function CheckoutPage() {
     setLoading(true);
 
     window.FlutterwaveCheckout({
-      public_key: "FLWPUBK_TEST-e680d41e90c5a7974577f46fc7d23949-X",
+      public_key: "FLWPUBK-f581b6f4a50dfa5f033d7e823ec7211c-X",
       tx_ref: `megstore_${Date.now()}`,
       amount: getCartTotal(),
       currency: "NGN",
