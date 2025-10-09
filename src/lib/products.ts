@@ -40,7 +40,7 @@ export const products: Product[] = [
     name: "Groundnut Oil (small Bottle)",
     image: "/products/groundnut oil.jpg",
     description: "High-quality groundnut oil for your cooking needs.",
-    price: 500,
+    price: 2400,
     category: "Oil",
     stock: 15,
     bestSeller: true,

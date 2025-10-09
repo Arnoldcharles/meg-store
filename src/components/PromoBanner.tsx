@@ -24,10 +24,10 @@ export default function PromoBanner() {
             Hurry, offer ends soon!
           </p>
           <Link
-            href="/products"
+            href="/products/967890127"
             className="mt-6 inline-block bg-white text-green-600 font-semibold px-6 py-3 rounded-xl shadow-md hover:bg-gray-100 transition"
           >
-            Shop Now
+            Get Now
           </Link>
         </div>
 
@@ -39,7 +39,7 @@ export default function PromoBanner() {
           className="flex-1 flex justify-center"
         >
           <Image
-            src="/promo.png" // 🔹 Add your promotional PNG image in /public
+            src="/Sales Promo flyer.png" // 🔹 Add your promotional PNG image in /public
             alt="Promo Offer"
             width={350}
             height={350}

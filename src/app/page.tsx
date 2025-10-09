@@ -14,7 +14,7 @@ export default function HomePage() {
       <FeaturedCategories />
       <FeaturedProducts />
       <PromoBanner />
-      <PromoImageBanner /*imageUrl="/promo-banner.png" link="/products"*/ />
+      <PromoImageBanner imageUrl="/Sales Promo flyer.png" link="/products" />
       {/*<DealsOfTheDay />*/}
       <NewArrivals />
       <Newsletter />

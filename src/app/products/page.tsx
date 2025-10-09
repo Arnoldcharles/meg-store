@@ -103,10 +103,10 @@ export default function ProductsPage() {
         </div>
 
         {/* Price Filter (placeholder) */}
-        <div>
+        {/*<div>
           <h3 className="font-medium mb-2">Price</h3>
           <p className="text-sm text-gray-500">Coming soon 🔒</p>
-        </div>
+        </div>*/}
       </aside>
 
       {/* Mobile Filter Button */}
