@@ -68,7 +68,7 @@ export default function CheckoutPage() {
       tx_ref: `megstore_${Date.now()}`,
       amount: getCartTotal(),
       currency: "NGN",
-      payment_options: "card, mobilemoney, ussd",
+      payment_options: "card, banktransfer, account, ussd, nqr, internetbanking, opay, payattitude, enaira, paga",
       customer: {
         email: form.email,
         name: form.name,
