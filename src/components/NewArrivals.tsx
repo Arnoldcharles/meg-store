@@ -47,7 +47,7 @@ export default function NewArrivals() {
             className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-lg transition"
           >
             <Image
-              src={product.image}
+              src={product.image  || "/placeholder.jpg"}
               alt={product.name}
               width={250}
               height={200}
