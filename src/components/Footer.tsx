@@ -71,17 +71,17 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2 text-sm">
             <li className="flex items-center gap-2">
-              <Phone size={16} /> +1 (555) 123-4567
+              <Phone size={16} /> +234 (902) 331-1459
             </li>
             <li className="flex items-center gap-2">
-              <Mail size={16} /> support@megstore.com
+              <Mail size={16} /> arnoldcharles028@gmail.com
             </li>
           </ul>
         </div>
 
         {/* Socials + Payment */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">Follow Now</h3>
           <div className="flex space-x-4 mb-6">
             <a
               href="#"

@@ -67,7 +67,7 @@ export default function Hero() {
                 >
                   <img
                     src={p.image || "/placeholder.jpg"}
-                    alt={p.name}
+                    alt={p.name || "Product"}
                     className="w-12 h-12 rounded-md object-cover"
                   />
                   <div>

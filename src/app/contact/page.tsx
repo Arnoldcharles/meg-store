@@ -73,9 +73,9 @@ export default function ContactPage() {
             Have questions, feedback, or suggestions? Reach out to us using the form or through the contact details below.
           </p>
           <div className="space-y-2 text-gray-700">
-            <p><strong>Email:</strong> support@megstore.com</p>
-            <p><strong>Phone:</strong> +1 234 567 890</p>
-            <p><strong>Address:</strong> 123 Mega St, Online City, Webland</p>
+            <p><strong>Email:</strong> arnoldcharles028@gmail.com</p>
+            <p><strong>Phone:</strong> +234 902 331 1459</p>
+            <p><strong>Address:</strong> 24 Ebinpejo St, Lagos City, Nigeria</p>
           </div>
         </motion.div>
 

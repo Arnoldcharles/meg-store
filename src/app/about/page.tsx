@@ -5,23 +5,23 @@ import CountUp from "react-countup";
 
 const teamMembers = [
   {
-    name: "Alice Johnson",
+    name: "Peace Duff",
     role: "CEO & Founder",
-    image: "/team/alice.png",
+    image: "/team/ceo.jpg",
   },
   {
-    name: "Brian Smith",
+    name: "Charles Duff",
     role: "Head of Operations",
     image: "/team/brian.png",
   },
   {
-    name: "Catherine Lee",
+    name: "Stephany",
     role: "Marketing Lead",
     image: "/team/catherine.png",
   },
   {
-    name: "David Kim",
-    role: "Product Manager",
+    name: "Charles Arnold",
+    role: "Programmer",
     image: "/team/david.png",
   },
 ];
@@ -86,7 +86,7 @@ export default function AboutPage() {
           transition={{ duration: 0.8 }}
         >
           <img
-            src="/about-us.png"
+            src="/hero4.png"
             alt="About Meg Store"
             className="rounded-lg shadow-lg max-w-full h-auto"
           />
@@ -149,7 +149,7 @@ export default function AboutPage() {
             transition={{ type: "spring", stiffness: 300 }}
           >
             <h3 className="text-4xl font-bold text-green-600">
-              <CountUp end={stat.value} duration={9} separator="," />
+              <CountUp end={stat.value} duration={10} separator="," />
             </h3>
             <p className="text-gray-700 font-semibold">{stat.label}</p>
           </motion.div>

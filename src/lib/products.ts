@@ -9,7 +9,7 @@ export type Product = {
   category: string;
   stock: number;
   bestSeller?: boolean;
-  createdAt?: string; // ISO date string
+  createdAt?: string;
 };
 
 export const products: Product[] = [

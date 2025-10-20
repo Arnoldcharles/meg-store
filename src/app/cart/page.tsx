@@ -48,7 +48,7 @@ export default function CartPage() {
               <div className="flex items-center gap-4">
                 <Image
                   src={item.image || "/placeholder.jpg"}
-                  alt={item.name}
+                  alt={item.name || "Product"}
                   width={80}
                   height={80}
                   className="w-20 h-20 object-contain"

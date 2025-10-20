@@ -48,7 +48,7 @@ export default function NewArrivals() {
           >
             <Image
               src={product.image  || "/placeholder.jpg"}
-              alt={product.name}
+              alt={product.name || "Product"}
               width={250}
               height={200}
               className="w-full h-40 object-cover rounded-lg"

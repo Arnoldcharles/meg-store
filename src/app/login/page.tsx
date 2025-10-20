@@ -77,7 +77,7 @@ export default function LoginPage() {
         {/* Left Side Image */}
         <div className="hidden md:flex flex-1 items-center justify-center bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-300 p-6">
           <Image
-            src="/auth.png"
+            src="/hero4.png"
             alt="Login Illustration"
             width={350}
             height={350}

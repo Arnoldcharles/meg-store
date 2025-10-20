@@ -58,7 +58,7 @@ export default function ProductsPage() {
   const handleLoadMore = () => {
     setLoading(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 4);
+      setVisibleCount((prev) => prev + 8);
       setLoading(false);
     }, 2200);
   };
@@ -263,7 +263,7 @@ export default function ProductsPage() {
             >
               <Image
                 src={product.image || "/placeholder.jpg"}
-                alt={product.name}
+                alt={product.name || "Product"}
                 width={200}
                 height={200}
                 className={`object-contain ${

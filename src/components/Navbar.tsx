@@ -20,7 +20,7 @@ export default function Navbar() {
     if (pathname === "/") setActive("home");
     else if (pathname.startsWith("/products")) setActive("products");
     else if (pathname.startsWith("/cart")) setActive("cart");
-    else if (pathname.startsWith("/account")) setActive("account");
+    else if (pathname.startsWith("/about")) setActive("about");
   }, [pathname]);
 
   return (
@@ -188,10 +188,10 @@ export default function Navbar() {
           >
             <FaUser
               className={`w-6 h-6 ${
-                active === "account" ? "text-yellow-300" : "text-white"
+                active === "about" ? "text-yellow-300" : "text-white"
               }`}
             />
-            {active === "account" && (
+            {active === "about" && (
               <motion.span
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
