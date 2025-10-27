@@ -56,7 +56,7 @@ export default function CartPage() {
                 <div>
                   <h2 className="font-semibold">{item.name}</h2>
                   <p className="text-green-600 font-bold">
-                    ₦{item.price.toFixed(2)}
+                    ₦ {item.price.toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -106,13 +106,13 @@ export default function CartPage() {
         <div className="border rounded-lg p-6 shadow h-fit sticky top-20">
           <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
           <div className="flex justify-between mb-2">
-            <span>Total Items:</span>
+            <span>Total Items :</span>
             <span>{getCartCount()}</span>
           </div>
           <div className="flex justify-between mb-4">
             <span>Total Price:</span>
             <span className="font-bold text-green-600">
-              ₦{getCartTotal().toFixed(2)}
+              ₦ {getCartTotal().toFixed(2)}
             </span>
           </div>
 
