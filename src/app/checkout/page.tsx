@@ -78,7 +78,7 @@ export default function CheckoutPage() {
       customizations: {
         title: "Meg Store Checkout",
         description: "Payment for your order",
-        logo: "/logo.png",
+        logo: "/hero4.png",
       },
       callback: function (response: any) {
         if (response.status === "successful") {
