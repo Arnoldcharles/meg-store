@@ -44,7 +44,7 @@ export default function ProductDetailsPage() {
     setTimeout(() => {
       addToCart({ ...(product as Product), quantity: 1 } as CartProduct);
       setAdding(false);
-    }, 2200);
+    }, 1000);
   };
 
   if (loading) {
@@ -104,12 +104,12 @@ export default function ProductDetailsPage() {
             {adding ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
-                Adding...
+                Adding to Cart...
               </div>
             ) : isInCart ? (
-              "Added"
+              "Added to Cart"
             ) : (
-              "Add to Cart"
+              "Add to Cart 🛒"
             )}
           </button>
         </motion.div>
@@ -138,7 +138,7 @@ export default function ProductDetailsPage() {
                   />
                   <h3 className="font-semibold mt-2">{item.name}</h3>
                   <p className="text-green-600 font-bold">
-                    ₦{item.price.toFixed(2)}
+                    ₦ {item.price.toFixed(2)}
                   </p>
                 </Link>
               </motion.div>
