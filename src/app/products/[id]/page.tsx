@@ -104,12 +104,12 @@ export default function ProductDetailsPage() {
             {adding ? (
               <div className="flex items-center justify-center gap-2">
                 <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
-                Adding to Cart...
+                Adding...
               </div>
             ) : isInCart ? (
-              "Added to Cart"
+              "Added to Cart ✅"
             ) : (
-              "Add to Cart 🛒"
+              "Add to Cart"
             )}
           </button>
         </motion.div>
