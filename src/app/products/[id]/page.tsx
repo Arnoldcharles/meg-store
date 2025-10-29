@@ -11,7 +11,7 @@ import PromoImageBanner from "@/components/PromoImageBanner";
 
 // Define a type for cart items that extends Product with quantity
 import type { Product } from "@/lib/products";
-type CartProduct = Product & { quantity: number };
+type CartProduct = Product & { quantity: number }; 
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
