@@ -65,7 +65,7 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 md:p-12">
-      {/* Sidebar Filter (desktop only) */}
+      {/* Sidebar Filter (desktop only) */} 
       <aside className="hidden md:block md:w-1/4 bg-gray-100 p-6 rounded-xl shadow-md h-fit sticky top-20">
         <h2 className="text-xl font-semibold mb-4">Filter</h2>
 
