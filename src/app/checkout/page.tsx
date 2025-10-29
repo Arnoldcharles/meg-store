@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   // Update states when country changes
   useEffect(() => {
     const country = countryStateData.countries.find(
-      (c) => c.name === form.country
+      (c) => c.name === form.country 
     );
     setStates(country ? country.states : []);
     setForm((prev) => ({ ...prev, state: "" }));
