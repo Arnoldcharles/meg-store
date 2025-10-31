@@ -35,12 +35,22 @@ export async function POST(request: Request) {
     }
 
     if (dishName) {
-      // simple keyword map for common dishes
+      // Extended keyword map for common dishes
       const recipeKeywords: Record<string, string[]> = {
-        rice: ["salt", "oil", "red oil", "groundnut", "crayfish", "stockfish", "egusi"],
+        rice: ["rice", "salt", "oil", "red oil", "groundnut", "crayfish", "stockfish"],
+        white: ["rice", "salt", "oil"],
         jollof: ["rice", "tomato", "red oil", "stockfish", "salt", "crayfish"],
+        "fried rice": ["rice", "tomato", "red oil", "stockfish", "salt", "crayfish"],
         stew: ["tomato", "red oil", "salt", "crayfish", "stockfish"],
+        "pepper soup": ["stockfish", "crayfish", "salt"],
+        "egusi soup": ["egusi", "stockfish", "crayfish", "salt", "waterleaf", "ugu"],
+        porridge: ["rice", "salt", "oil"],
       };
+
+      // servings heuristic: parse 'for N people' or 'for N' from the message
+      let servings = 2;
+      const sv = message.match(/for\s*(\d+)\s*(people|persons|guests)?/i) || message.match(/servings?\s*(\d+)/i);
+      if (sv && sv[1]) servings = Math.max(1, Number(sv[1]));
 
       const keywords = recipeKeywords[dishName] ?? [dishName];
       const found: any[] = [];
@@ -48,12 +58,30 @@ export async function POST(request: Request) {
         const matches = searchProducts(kw);
         if (matches.length > 0) {
           const p = matches[0];
-          found.push({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock, image: p.image, qty: "1 unit" });
+          // Quantity heuristics based on category and name
+          let qty = "1 unit";
+          const cat = (p.category || "").toLowerCase();
+          const name = (p.name || "").toLowerCase();
+          if (cat.includes("oil") || name.includes("oil")) {
+            qty = servings <= 2 ? "200ml" : `${200 * servings}ml`;
+          } else if (cat.includes("fish") || name.includes("stockfish") || name.includes("crayfish")) {
+            qty = servings <= 2 ? "1 pack" : `${Math.ceil(servings / 2)} pack(s)`;
+          } else if (cat.includes("condiments") || name.includes("salt") || name.includes("egusi")) {
+            qty = servings <= 2 ? "1 small pack" : `${Math.ceil(servings)} small pack(s)`;
+          } else if (cat.includes("vegetables") || name.includes("leaf")) {
+            qty = servings <= 2 ? "1 bunch" : `${servings} bunch(es)`;
+          } else if (name.includes("rice")) {
+            // approximate cups of rice per serving
+            const cups = Math.max(1, Math.round(servings * 0.9));
+            qty = `${cups} cup(s)`;
+          }
+
+          found.push({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock, image: p.image, qty });
         }
       }
       if (found.length > 0) {
-        const reply = `Suggested ingredients for ${dishName}:`;
-        // return structured ingredients and results so client can render links
+        const reply = `Suggested ingredients for ${dishName} (for ${servings} people):`;
+        // return structured ingredients and results so client can render links and actions
         return NextResponse.json({ reply, ingredients: found, results: found });
       }
       // if none found, fallthrough to normal behavior

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -15,6 +16,7 @@ export default function AIChat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     // Load persisted messages or show welcome
@@ -159,6 +161,26 @@ export default function AIChat() {
                   {/* If the parsed message contains ingredients specifically, render ingredient chips first */}
                   {Array.isArray(results) && results.length > 0 && results[0]?.qty && (
                     <div className="mb-3 grid grid-cols-1 gap-2">
+                      <div className="flex justify-end mb-2">
+                        <button
+                          onClick={() => {
+                            // add all ingredients to cart
+                            for (const ing of results) {
+                              try {
+                                // add with parsed qty: if qty contains a number, use it, otherwise default 1
+                                const numMatch = String(ing.qty).match(/(\d+)/);
+                                const q = numMatch ? Math.max(1, Number(numMatch[1])) : 1;
+                                addToCart({ id: ing.id, name: ing.name, image: ing.image || "", description: ing.name, price: ing.price, category: ing.category, stock: ing.stock } as any, q);
+                              } catch (e) {
+                                // ignore add errors
+                              }
+                            }
+                          }}
+                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                          Add all ingredients to cart
+                        </button>
+                      </div>
                       {results.map((ing) => (
                         <div key={ing.id} className="flex items-center gap-3 bg-white p-2 rounded shadow-sm">
                           <div className="w-10 h-10 relative">
