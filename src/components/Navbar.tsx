@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaShoppingCart, FaUser, FaHome, FaBox } from "react-icons/fa";
+import { FaShoppingCart, FaUser, FaHome, FaBox, FaRobot } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,6 +19,7 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname === "/") setActive("home");
     else if (pathname.startsWith("/products")) setActive("products");
+    else if (pathname.startsWith("/ai")) setActive("ai");
     else if (pathname.startsWith("/cart")) setActive("cart");
     else if (pathname.startsWith("/about")) setActive("about");
   }, [pathname]);
@@ -44,6 +45,11 @@ export default function Navbar() {
             <li>
               <Link href="/products" className="hover:text-yellow-300">
                 Products
+              </Link>
+            </li>
+            <li>
+              <Link href="/ai" className="hover:text-yellow-300">
+                AI Assistant
               </Link>
             </li>
             <li>
@@ -198,6 +204,25 @@ export default function Navbar() {
                 className="text-xs mt-1"
               >
                 About
+              </motion.span>
+            )}
+          </Link>
+          {/* AI */}
+          <Link
+            href="/ai"
+            onClick={() => setActive("ai")}
+            className="flex flex-col items-center"
+          >
+            <FaRobot
+              className={`w-6 h-6 ${active === "ai" ? "text-yellow-300" : "text-white"}`}
+            />
+            {active === "ai" && (
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs mt-1"
+              >
+                AI
               </motion.span>
             )}
           </Link>

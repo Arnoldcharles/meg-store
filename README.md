@@ -34,3 +34,18 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## AI Assistant (optional)
+
+This project includes a simple AI Assistant available at `/ai`.
+
+- To enable real AI responses from OpenAI, set the environment variable `OPENAI_API_KEY` before starting the dev server. On Windows PowerShell:
+
+```powershell
+$env:OPENAI_API_KEY = "your_openai_api_key_here"
+npm run dev
+```
+
+- If `OPENAI_API_KEY` is not set the assistant will return a helpful fallback message (useful for local development without a key).
+
+The assistant uses a basic chat UI component at `src/components/AIChat.tsx` and a server API route at `src/app/api/ai/route.ts` which proxies requests to the OpenAI API when configured.
