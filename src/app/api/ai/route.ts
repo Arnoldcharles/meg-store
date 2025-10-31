@@ -19,6 +19,44 @@ export async function POST(request: Request) {
     const message = body.message || "";
     console.log("/api/ai POST message:", message);
 
+    // Recipe intent detection: if user asks for ingredients/recipe for a dish, assemble ingredients from product DB
+    const low = message.toLowerCase();
+    const recipeMatch = low.match(/ingredients? (for|to make) (.+)|recipe (for) (.+)|what do i need to (make|cook) (.+)/i);
+    let dishName = "";
+    if (recipeMatch) {
+      // find the non-empty capture
+      dishName = (recipeMatch[2] || recipeMatch[4] || recipeMatch[5] || "").trim().toLowerCase();
+    } else {
+      // also match simple patterns like 'ingredients for rice'
+      const m = low.match(/ingredients? for (\w+)/i);
+      if (m) dishName = (m[1] || "").toLowerCase();
+    }
+
+    if (dishName) {
+      // simple keyword map for common dishes
+      const recipeKeywords: Record<string, string[]> = {
+        rice: ["salt", "oil", "red oil", "groundnut", "crayfish", "stockfish", "egusi"],
+        jollof: ["rice", "tomato", "red oil", "stockfish", "salt", "crayfish"],
+        stew: ["tomato", "red oil", "salt", "crayfish", "stockfish"],
+      };
+
+      const keywords = recipeKeywords[dishName] ?? [dishName];
+      const found: any[] = [];
+      for (const kw of keywords) {
+        const matches = searchProducts(kw);
+        if (matches.length > 0) {
+          const p = matches[0];
+          found.push({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock, image: p.image, qty: "1 unit" });
+        }
+      }
+      if (found.length > 0) {
+        const reply = `Suggested ingredients for ${dishName}:`;
+        // return structured ingredients and results so client can render links
+        return NextResponse.json({ reply, ingredients: found, results: found });
+      }
+      // if none found, fallthrough to normal behavior
+    }
+
     // If OPENAI_API_KEY is set, proxy to OpenAI Chat Completions and provide product context
     const key = process.env.OPENAI_API_KEY;
     const productContext = buildProductContext();
@@ -100,8 +138,8 @@ export async function POST(request: Request) {
       const top = localMatches.slice(0, 6);
       const lines = top.map((p) => `- ${p.name} — ₦${p.price} — category: ${p.category} — stock: ${p.stock}`);
       const reply = `I found ${localMatches.length} matching product(s):\n${lines.join("\n")}`;
-      // Return structured results so client can render links
-      const results = top.map((p) => ({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock }));
+  // Return structured results so client can render links
+  const results = top.map((p) => ({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock, image: p.image || "" }));
       return NextResponse.json({ reply, results });
     }
 

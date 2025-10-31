@@ -74,10 +74,20 @@ export default function AIChat() {
         throw new Error(`API error: ${res.status} ${textErr}`);
       }
       const data = await res.json();
-      const reply = data?.reply || "Sorry, I couldn't generate a response.";
+  const reply = data?.reply || "Sorry, I couldn't generate a response.";
+  const ingredients = Array.isArray(data?.ingredients) ? data.ingredients : undefined;
 
       // If structured results are returned, append them as a special assistant message
-      if (Array.isArray(data?.results) && data.results.length > 0) {
+      if (ingredients && ingredients.length > 0) {
+        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
+        setMessages((m) => [...m, assistantMsg]);
+        setTimeout(() => {
+          setMessages((m) => [
+            ...m,
+            { id: `ing-${Date.now()}`, role: "assistant", text: JSON.stringify({ ingredients }) },
+          ]);
+        }, 50);
+      } else if (Array.isArray(data?.results) && data.results.length > 0) {
         const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
         setMessages((m) => [...m, assistantMsg]);
         // Append a pseudo-message for results (client will render results from latest API response state)
@@ -113,7 +123,7 @@ export default function AIChat() {
         className="h-64 overflow-y-auto border rounded-md p-3 space-y-3 bg-gray-50"
       >
         {messages.map((m) => {
-          // detect pseudo result messages which are JSON arrays
+          // detect pseudo result messages which are JSON arrays or objects with results/ingredients
           let isResults = false;
           let results: any[] = [];
           if (m.role === "assistant") {
@@ -122,6 +132,12 @@ export default function AIChat() {
               if (Array.isArray(parsed)) {
                 isResults = true;
                 results = parsed;
+              } else if (parsed && Array.isArray(parsed.results)) {
+                isResults = true;
+                results = parsed.results;
+              } else if (parsed && Array.isArray(parsed.ingredients)) {
+                isResults = true;
+                results = parsed.ingredients;
               }
             } catch (e) {
               // not JSON, render normally
@@ -139,37 +155,57 @@ export default function AIChat() {
               </div>
 
               {isResults && (
-                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {results.map((r) => (
-                    <div key={r.id} className="bg-white rounded-lg shadow-sm overflow-hidden flex">
-                      <div className="w-28 h-28 relative">
-                        <Image
-                          src={r.image || "/file.svg"}
-                          alt={r.name}
-                          fill
-                          sizes="(max-width: 768px) 96px, 112px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="p-3 flex-1 flex flex-col justify-between">
-                        <div>
-                          <div className="font-semibold text-gray-800">{r.name}</div>
-                          <div className="text-sm text-gray-500">{r.category}</div>
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-green-50 text-green-700 font-bold px-2 py-1 rounded">₦{r.price}</div>
-                            <div className="text-xs text-gray-400">stock: {r.stock}</div>
+                <>
+                  {/* If the parsed message contains ingredients specifically, render ingredient chips first */}
+                  {Array.isArray(results) && results.length > 0 && results[0]?.qty && (
+                    <div className="mb-3 grid grid-cols-1 gap-2">
+                      {results.map((ing) => (
+                        <div key={ing.id} className="flex items-center gap-3 bg-white p-2 rounded shadow-sm">
+                          <div className="w-10 h-10 relative">
+                            <Image src={ing.image || "/file.svg"} alt={ing.name} fill className="object-cover rounded" />
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Link href={`/products/${r.id}`} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">View product</Link>
-                            <a href={`/products/${r.id}`} target="_blank" rel="noreferrer" className="text-xs text-gray-500 underline">Open</a>
+                          <div className="flex-1">
+                            <div className="font-medium">{ing.name}</div>
+                            <div className="text-xs text-gray-500">{ing.qty} • ₦{ing.price}</div>
                           </div>
+                          <Link href={`/products/${ing.id}`} className="text-green-600 underline">View</Link>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+
+                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {results.map((r) => (
+                      <div key={r.id} className="bg-white rounded-lg shadow-sm overflow-hidden flex">
+                        <div className="w-28 h-28 relative">
+                          <Image
+                            src={r.image || "/file.svg"}
+                            alt={r.name}
+                            fill
+                            sizes="(max-width: 768px) 96px, 112px"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="p-3 flex-1 flex flex-col justify-between">
+                          <div>
+                            <div className="font-semibold text-gray-800">{r.name}</div>
+                            <div className="text-sm text-gray-500">{r.category}</div>
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <div className="flex items-center gap-3">
+                              <div className="bg-green-50 text-green-700 font-bold px-2 py-1 rounded">₦{r.price}</div>
+                              <div className="text-xs text-gray-400">stock: {r.stock}</div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Link href={`/products/${r.id}`} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">View product</Link>
+                              <a href={`/products/${r.id}`} target="_blank" rel="noreferrer" className="text-xs text-gray-500 underline">Open</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           );
