@@ -117,6 +117,24 @@ export default function AIChat() {
     if (e.key === "Enter") send();
   };
 
+  const clearHistory = (confirmFirst = true) => {
+    if (confirmFirst) {
+      try {
+        const ok = window.confirm("Clear all AI chat history? This will remove saved messages.");
+        if (!ok) return;
+      } catch (e) {
+        // if window.confirm isn't available, proceed
+      }
+    }
+    setMessages([]);
+    try {
+      localStorage.removeItem("meg_ai_messages");
+      localStorage.removeItem("meg_ai_results");
+    } catch (e) {
+      // ignore
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-4">
       <h2 className="text-2xl font-semibold mb-4">AI Assistant</h2>
@@ -248,6 +266,12 @@ export default function AIChat() {
           className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-60"
         >
           {loading ? "Thinking..." : "Send"}
+        </button>
+        <button
+          onClick={() => clearHistory(true)}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+        >
+          Clear history
         </button>
       </div>
     </div>
