@@ -42,7 +42,7 @@ This project includes a simple AI Assistant available at `/ai`.
 - To enable real AI responses from OpenAI, set the environment variable `OPENAI_API_KEY` before starting the dev server. On Windows PowerShell:
 
 ```powershell
-$env:OPENAI_API_KEY = "your_openai_api_key_here"
+$env:OPENAI_API_KEY = "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"
 npm run dev
 ```
 
