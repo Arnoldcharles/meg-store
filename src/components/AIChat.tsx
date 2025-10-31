@@ -15,6 +15,11 @@ export default function AIChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [backupMessages, setBackupMessages] = useState<Message[] | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [pendingClearType, setPendingClearType] = useState<"all" | "results" | null>(null);
+  const [backupResults, setBackupResults] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const { addToCart } = useCart();
 
@@ -119,13 +124,13 @@ export default function AIChat() {
 
   const clearHistory = (confirmFirst = true) => {
     if (confirmFirst) {
-      try {
-        const ok = window.confirm("Clear all AI chat history? This will remove saved messages.");
-        if (!ok) return;
-      } catch (e) {
-        // if window.confirm isn't available, proceed
-      }
+      // open custom modal to confirm
+      setPendingClearType("all");
+      setShowModal(true);
+      return;
     }
+    // backup for undo
+    setBackupMessages(messages);
     setMessages([]);
     try {
       localStorage.removeItem("meg_ai_messages");
@@ -133,6 +138,49 @@ export default function AIChat() {
     } catch (e) {
       // ignore
     }
+    setShowToast(true);
+    // auto-dismiss toast after 6s
+    setTimeout(() => setShowToast(false), 6000);
+  };
+
+  const clearResultsOnly = (confirmFirst = true) => {
+    if (confirmFirst) {
+      setPendingClearType("results");
+      setShowModal(true);
+      return;
+    }
+    // backup results (store as string) for undo
+    try {
+      const raw = localStorage.getItem("meg_ai_results");
+      setBackupResults(raw);
+      localStorage.removeItem("meg_ai_results");
+    } catch (e) {
+      setBackupResults(null);
+    }
+    setShowToast(true);
+    // auto-dismiss
+    setTimeout(() => setShowToast(false), 6000);
+  };
+
+  const undoClear = () => {
+    if (backupMessages) {
+      setMessages(backupMessages);
+      try {
+        localStorage.setItem("meg_ai_messages", JSON.stringify(backupMessages));
+      } catch (e) {}
+    }
+    setBackupMessages(null);
+    setShowToast(false);
+  };
+
+  const undoClearResults = () => {
+    if (backupResults) {
+      try {
+        localStorage.setItem("meg_ai_results", backupResults);
+      } catch (e) {}
+    }
+    setBackupResults(null);
+    setShowToast(false);
   };
 
   return (
@@ -273,7 +321,49 @@ export default function AIChat() {
         >
           Clear history
         </button>
+        <button
+          onClick={() => clearResultsOnly(true)}
+          className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
+        >
+          Clear results only
+        </button>
       </div>
+      {/* Toast for undo */}
+      {showToast && (
+        <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-4 py-2 rounded shadow-lg flex items-center gap-3 transition-opacity duration-300 ease-in-out opacity-100">
+          <div>Cleared</div>
+          {pendingClearType === "results" ? (
+            <>
+              <button onClick={undoClearResults} className="bg-white text-gray-900 px-2 py-1 rounded text-sm">Undo</button>
+            </>
+          ) : (
+            <>
+              <button onClick={undoClear} className="bg-white text-gray-900 px-2 py-1 rounded text-sm">Undo</button>
+            </>
+          )}
+          <button onClick={() => setShowToast(false)} className="text-gray-300 hover:text-white text-sm">✕</button>
+        </div>
+      )}
+
+      {/* Confirmation modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black opacity-40" onClick={() => setShowModal(false)} />
+          <div className="bg-white rounded-lg p-6 z-50 shadow-lg w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-2">Confirm</h3>
+            <p className="text-sm text-gray-600 mb-4">Are you sure you want to clear {pendingClearType === "results" ? "the saved results" : "your chat history"}? This action can be undone briefly with Undo.</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => { setShowModal(false); setPendingClearType(null); }} className="px-3 py-1 rounded border">Cancel</button>
+              <button onClick={() => {
+                setShowModal(false);
+                if (pendingClearType === "results") clearResultsOnly(false);
+                else clearHistory(false);
+                setPendingClearType(null);
+              }} className="px-3 py-1 rounded bg-red-600 text-white">Yes, clear</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
