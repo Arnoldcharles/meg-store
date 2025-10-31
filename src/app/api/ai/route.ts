@@ -19,8 +19,10 @@ export async function POST(request: Request) {
     const message = body.message || "";
     console.log("/api/ai POST message:", message);
 
-    // Recipe intent detection: if user asks for ingredients/recipe for a dish, assemble ingredients from product DB
+    // Basic intent detection for local handling (before calling OpenAI)
     const low = message.toLowerCase();
+
+  // Recipe intent detection: if user asks for ingredients/recipe for a dish, assemble ingredients from product DB
     const recipeMatch = low.match(/ingredients? (for|to make) (.+)|recipe (for) (.+)|what do i need to (make|cook) (.+)/i);
     let dishName = "";
     if (recipeMatch) {
@@ -55,6 +57,37 @@ export async function POST(request: Request) {
         return NextResponse.json({ reply, ingredients: found, results: found });
       }
       // if none found, fallthrough to normal behavior
+    }
+
+    // Recommendation intent (e.g. "recommend", "suggest", "what should I buy")
+    const recommendMatch = low.match(/\b(recommend|suggest|what should i buy|best|top)\b/);
+    if (recommendMatch) {
+      // Try to extract a price ceiling like 'under 3000' or 'below 3000'
+      const priceMatch = low.match(/under\s*(\d+)|below\s*(\d+)/);
+      const priceLimit = priceMatch ? Number(priceMatch[1] || priceMatch[2]) : undefined;
+      // Try to detect a category word by scanning existing categories
+      const categories = Array.from(new Set(getProducts().map((p) => p.category.toLowerCase())));
+      const category = categories.find((c) => low.includes(c)) || undefined;
+
+      // Filter products: prefer bestSellers then by stock and price
+      let candidates = getProducts().filter((p) => p.stock > 0);
+      if (category) candidates = candidates.filter((p) => p.category.toLowerCase() === category);
+      if (priceLimit) candidates = candidates.filter((p) => p.price <= priceLimit);
+      // sort by bestSeller then price ascending
+      candidates.sort((a, b) => (b.bestSeller ? 1 : 0) - (a.bestSeller ? 1 : 0) || a.price - b.price);
+      const top = candidates.slice(0, 6).map((p) => ({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock, image: p.image || "" }));
+      if (top.length > 0) {
+        const reply = `Here are some recommendations${category ? ` in ${category}` : ""}${priceLimit ? ` under ${priceLimit}` : ""}:`;
+        return NextResponse.json({ reply, results: top });
+      }
+    }
+
+    // Help/site-usage intent
+    const helpMatch = low.match(/how do i|how to |how can i|where is|how do you|help|checkout|login|cart/);
+    if (helpMatch && !process.env.OPENAI_API_KEY) {
+      // provide local help text when OpenAI isn't available
+      const helpText = `Site help:\n- Search products: visit /products or use the search on the products page.\n- View product details: click a product or open /products/[id].\n- Add to cart: click 'Add to Cart' on a product page.\n- View cart & checkout: visit /cart and follow checkout prompts.\n- Login: go to /login to sign in.\nIf you tell me what you want to do (search, buy, or manage account) I can guide you.`;
+      return NextResponse.json({ reply: helpText });
     }
 
     // If OPENAI_API_KEY is set, proxy to OpenAI Chat Completions and provide product context
