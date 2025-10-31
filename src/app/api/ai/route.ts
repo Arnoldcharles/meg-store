@@ -8,6 +8,7 @@ export async function POST(request: Request) {
   try {
     const body: Body = await request.json();
     const message = body.message || "";
+    console.log("/api/ai POST message:", message);
 
     // If OPENAI_API_KEY is set, proxy to OpenAI Chat Completions
     const key = process.env.OPENAI_API_KEY;
@@ -41,4 +42,9 @@ export async function POST(request: Request) {
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || String(err) }, { status: 500 });
   }
+}
+
+// Simple GET handler so visiting /api/ai in a browser or health checks work
+export async function GET() {
+  return NextResponse.json({ status: "ok", message: "AI API endpoint (POST) is available" });
 }

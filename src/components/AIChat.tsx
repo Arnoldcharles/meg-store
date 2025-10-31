@@ -47,14 +47,18 @@ export default function AIChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
       });
+      if (!res.ok) {
+        const textErr = await res.text();
+        throw new Error(`API error: ${res.status} ${textErr}`);
+      }
       const data = await res.json();
       const reply = data?.reply || "Sorry, I couldn't generate a response.";
       const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
       setMessages((m) => [...m, assistantMsg]);
-    } catch (err) {
+    } catch (err: any) {
       setMessages((m) => [
         ...m,
-        { id: `a-err-${Date.now()}`, role: "assistant", text: "There was an error contacting the AI service." },
+        { id: `a-err-${Date.now()}`, role: "assistant", text: err?.message || "There was an error contacting the AI service." },
       ]);
     } finally {
       setLoading(false);
