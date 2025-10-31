@@ -183,6 +183,37 @@ export default function AIChat() {
     setShowToast(false);
   };
 
+  const hasConversation = () => {
+    // treat presence of messages beyond the welcome message as a conversation
+    if (!messages || messages.length === 0) return false;
+    if (messages.length > 1) return true;
+    // sometimes welcome message has id 'm-0'
+    return messages.some((m) => m.role === "assistant" && m.id !== "m-0");
+  };
+
+  const hasResults = () => {
+    // check messages for parsed results/ingredients or localStorage
+    try {
+      for (const m of messages) {
+        if (m.role !== "assistant") continue;
+        try {
+          const parsed = JSON.parse(m.text);
+          if (Array.isArray(parsed)) return true;
+          if (parsed && (Array.isArray(parsed.results) || Array.isArray(parsed.ingredients))) return true;
+        } catch (e) {
+          // not JSON
+        }
+      }
+      if (typeof window !== "undefined") {
+        const raw = localStorage.getItem("meg_ai_results");
+        if (raw) return true;
+      }
+    } catch (e) {
+      // ignore
+    }
+    return false;
+  };
+
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-4">
       <h2 className="text-2xl font-semibold mb-4">AI Assistant</h2>
@@ -300,7 +331,7 @@ export default function AIChat() {
         })}
       </div>
 
-      <div className="flex gap-2 mt-4">
+      <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <input
           className="flex-1 border rounded-lg px-3 py-2"
           value={input}
@@ -311,22 +342,27 @@ export default function AIChat() {
         <button
           onClick={send}
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-60"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg disabled:opacity-60 w-full sm:w-auto"
         >
           {loading ? "Thinking..." : "Send"}
         </button>
-        <button
-          onClick={() => clearHistory(true)}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-        >
-          Clear history
-        </button>
-        <button
-          onClick={() => clearResultsOnly(true)}
-          className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700"
-        >
-          Clear results only
-        </button>
+        {/* Show clear buttons only when there's conversation/results */}
+        {hasConversation() && (
+          <button
+            onClick={() => clearHistory(true)}
+            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 w-full sm:w-auto"
+          >
+            Clear history
+          </button>
+        )}
+        {hasResults() && (
+          <button
+            onClick={() => clearResultsOnly(true)}
+            className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 w-full sm:w-auto"
+          >
+            Clear results only
+          </button>
+        )}
       </div>
       {/* Toast for undo */}
       {showToast && (
