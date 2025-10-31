@@ -55,9 +55,11 @@ export async function POST(request: Request) {
     const localMatches = searchProducts(message);
     if (localMatches.length > 0) {
       const top = localMatches.slice(0, 6);
-      const lines = top.map((p) => `- ${p.name} — ₦${p.price} — category: ${p.category} — stock: ${p.stock} — /products/${p.id}`);
+      const lines = top.map((p) => `- ${p.name} — ₦${p.price} — category: ${p.category} — stock: ${p.stock}`);
       const reply = `I found ${localMatches.length} matching product(s):\n${lines.join("\n")}`;
-      return NextResponse.json({ reply });
+      // Return structured results so client can render links
+      const results = top.map((p) => ({ id: p.id, name: p.name, price: p.price, category: p.category, stock: p.stock }));
+      return NextResponse.json({ reply, results });
     }
 
     const fallback = `I don't have access to the external AI service in this environment. You asked: "${message}". I couldn't find matching products; try asking about categories (e.g., 'show me oil products') or product names.`;

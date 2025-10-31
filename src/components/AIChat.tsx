@@ -53,8 +53,22 @@ export default function AIChat() {
       }
       const data = await res.json();
       const reply = data?.reply || "Sorry, I couldn't generate a response.";
-      const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
-      setMessages((m) => [...m, assistantMsg]);
+
+      // If structured results are returned, append them as a special assistant message
+      if (Array.isArray(data?.results) && data.results.length > 0) {
+        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
+        setMessages((m) => [...m, assistantMsg]);
+        // Append a pseudo-message for results (client will render results from latest API response state)
+        setTimeout(() => {
+          setMessages((m) => [
+            ...m,
+            { id: `r-${Date.now()}`, role: "assistant", text: JSON.stringify(data.results) },
+          ]);
+        }, 50);
+      } else {
+        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
+        setMessages((m) => [...m, assistantMsg]);
+      }
     } catch (err: any) {
       setMessages((m) => [
         ...m,
@@ -76,17 +90,50 @@ export default function AIChat() {
         ref={listRef}
         className="h-64 overflow-y-auto border rounded-md p-3 space-y-3 bg-gray-50"
       >
-        {messages.map((m) => (
-          <div key={m.id} className={m.role === "user" ? "text-right" : "text-left"}>
-            <div
-              className={`inline-block px-3 py-2 rounded-lg text-sm ${
-                m.role === "user" ? "bg-green-600 text-white" : "bg-white text-gray-800"
-              } shadow`}
-            >
-              {m.text}
+        {messages.map((m) => {
+          // detect pseudo result messages which are JSON arrays
+          let isResults = false;
+          let results: any[] = [];
+          if (m.role === "assistant") {
+            try {
+              const parsed = JSON.parse(m.text);
+              if (Array.isArray(parsed)) {
+                isResults = true;
+                results = parsed;
+              }
+            } catch (e) {
+              // not JSON, render normally
+            }
+          }
+
+          return (
+            <div key={m.id} className={m.role === "user" ? "text-right" : "text-left"}>
+              <div
+                className={`inline-block px-3 py-2 rounded-lg text-sm ${
+                  m.role === "user" ? "bg-green-600 text-white" : "bg-white text-gray-800"
+                } shadow`}
+              >
+                {isResults ? "Search results:" : m.text}
+              </div>
+
+              {isResults && (
+                <div className="mt-2 space-y-2">
+                  {results.map((r) => (
+                    <div key={r.id} className="p-2 border rounded flex justify-between items-center bg-white">
+                      <div>
+                        <div className="font-semibold">{r.name}</div>
+                        <div className="text-sm text-gray-600">{r.category} — ₦{r.price} — stock: {r.stock}</div>
+                      </div>
+                      <a href={`/products/${r.id}`} className="text-green-600 font-medium hover:underline">
+                        View
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="flex gap-2 mt-4">
