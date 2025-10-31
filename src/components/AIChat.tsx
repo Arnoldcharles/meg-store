@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 
 type Message = {
   id: string;
@@ -124,9 +125,9 @@ export default function AIChat() {
                         <div className="font-semibold">{r.name}</div>
                         <div className="text-sm text-gray-600">{r.category} — ₦{r.price} — stock: {r.stock}</div>
                       </div>
-                      <a href={`/products/${r.id}`} className="text-green-600 font-medium hover:underline">
+                      <Link href={`/products/${r.id}`} className="text-green-600 font-medium hover:underline">
                         View
-                      </a>
+                      </Link>
                     </div>
                   ))}
                 </div>
