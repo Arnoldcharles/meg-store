@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 type Message = {
   id: string;
@@ -16,7 +17,19 @@ export default function AIChat() {
   const listRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Welcome message
+    // Load persisted messages or show welcome
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("meg_ai_messages");
+      if (saved) {
+        try {
+          setMessages(JSON.parse(saved));
+          return;
+        } catch (e) {
+          // fallthrough to default
+        }
+      }
+    }
+
     setMessages([
       {
         id: "m-0",
@@ -30,6 +43,14 @@ export default function AIChat() {
     // scroll to bottom when messages change
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+    // persist
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("meg_ai_messages", JSON.stringify(messages));
+      } catch (e) {
+        // ignore
+      }
     }
   }, [messages]);
 
@@ -118,16 +139,34 @@ export default function AIChat() {
               </div>
 
               {isResults && (
-                <div className="mt-2 space-y-2">
+                <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
                   {results.map((r) => (
-                    <div key={r.id} className="p-2 border rounded flex justify-between items-center bg-white">
-                      <div>
-                        <div className="font-semibold">{r.name}</div>
-                        <div className="text-sm text-gray-600">{r.category} — ₦{r.price} — stock: {r.stock}</div>
+                    <div key={r.id} className="bg-white rounded-lg shadow-sm overflow-hidden flex">
+                      <div className="w-28 h-28 relative">
+                        <Image
+                          src={r.image || "/file.svg"}
+                          alt={r.name}
+                          fill
+                          sizes="(max-width: 768px) 96px, 112px"
+                          className="object-cover"
+                        />
                       </div>
-                      <Link href={`/products/${r.id}`} className="text-green-600 font-medium hover:underline">
-                        View
-                      </Link>
+                      <div className="p-3 flex-1 flex flex-col justify-between">
+                        <div>
+                          <div className="font-semibold text-gray-800">{r.name}</div>
+                          <div className="text-sm text-gray-500">{r.category}</div>
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-green-50 text-green-700 font-bold px-2 py-1 rounded">₦{r.price}</div>
+                            <div className="text-xs text-gray-400">stock: {r.stock}</div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Link href={`/products/${r.id}`} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">View product</Link>
+                            <a href={`/products/${r.id}`} target="_blank" rel="noreferrer" className="text-xs text-gray-500 underline">Open</a>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

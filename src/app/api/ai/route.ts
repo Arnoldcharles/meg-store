@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getProducts, searchProducts } from "@/lib/products";
+import { getProducts, searchProducts, getProductById } from "@/lib/products";
 
 type Body = {
   message?: string;
@@ -23,7 +23,8 @@ export async function POST(request: Request) {
     const key = process.env.OPENAI_API_KEY;
     const productContext = buildProductContext();
     if (key) {
-      const systemPrompt = `You are Meg Store assistant. Use the provided product catalog to answer user questions about products, prices, availability, and recommendations. Be factual and only reference products that exist in the catalog. Product catalog JSON:\n${productContext}`;
+      // Instruct the model to return a JSON object with a 'reply' string and an optional 'results' array
+      const systemPrompt = `You are Meg Store assistant. Use the provided product catalog to answer user questions about products, prices, availability, and recommendations. Be factual and only reference products that exist in the catalog. When appropriate, return a JSON object ONLY (no extra text) with this shape:\n{\n  "reply": string,\n  "results": [ { "id": string, "name": string, "price": number, "category": string, "stock": number } ]\n}\nIf you cannot produce results, return { "reply": string }. Product catalog JSON:\n${productContext}`;
 
       const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -47,8 +48,50 @@ export async function POST(request: Request) {
       }
 
       const json = await res.json();
-      const reply = json?.choices?.[0]?.message?.content || "";
-      return NextResponse.json({ reply });
+      const raw = json?.choices?.[0]?.message?.content || "";
+
+      // Try to parse JSON from the model reply. Models sometimes add stray text; attempt to extract the JSON block.
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {
+        // Attempt to extract JSON substring
+        const start = raw.indexOf("{");
+        const end = raw.lastIndexOf("}");
+        if (start !== -1 && end !== -1 && end > start) {
+          const candidate = raw.slice(start, end + 1);
+          try {
+            parsed = JSON.parse(candidate);
+          } catch (_) {
+            parsed = null;
+          }
+        }
+      }
+
+      if (parsed && typeof parsed.reply === "string") {
+        // Validate results shape if present
+        if (Array.isArray(parsed.results)) {
+          const validResults = parsed.results
+            .filter((r: any) => r && typeof r.id === "string")
+            .map((r: any) => {
+              const id = String(r.id);
+              const product = getProductById(id);
+              return {
+                id,
+                name: String(r.name || (product?.name ?? "")),
+                price: Number(r.price ?? product?.price ?? 0),
+                category: String(r.category || (product?.category ?? "")),
+                stock: Number(r.stock ?? product?.stock ?? 0),
+                image: product?.image || "",
+              };
+            });
+          return NextResponse.json({ reply: parsed.reply, results: validResults });
+        }
+        return NextResponse.json({ reply: parsed.reply });
+      }
+
+      // If parsing failed, return raw reply as fallback
+      return NextResponse.json({ reply: raw });
     }
 
     // Fallback: use local product search to answer simple queries when no API key is configured
