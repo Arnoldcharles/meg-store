@@ -1,6 +1,8 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { saveOrder } from "@/lib/orders";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import countryStateData from "@/lib/countryState";
@@ -13,6 +15,7 @@ declare global {
 
 export default function CheckoutPage() {
   const { cart, getCartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -82,6 +85,20 @@ export default function CheckoutPage() {
       },
       callback: function (response: any) {
         if (response.status === "successful") {
+          // build order object and persist locally (per-user)
+          const order = {
+            id: response.tx_ref || `order_${Date.now()}`,
+            userId: user?.uid || null,
+            items: cart,
+            total: Number(getCartTotal().toFixed(2)),
+            status: "pending",
+            createdAt: Date.now(),
+            trackingNumber: response.flw_ref || undefined,
+          };
+          try {
+            saveOrder(order as any);
+          } catch (e) {}
+
           fetch("/api/sendOrderEmail", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

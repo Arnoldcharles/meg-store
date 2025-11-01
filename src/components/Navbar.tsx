@@ -24,6 +24,7 @@ export default function Navbar() {
     else if (pathname.startsWith("/about")) setActive("about");
   }, [pathname]);
 
+
   return (
     <>
       {/* ✅ Top Navbar (Desktop + Mobile logo/login) */}
@@ -52,6 +53,13 @@ export default function Navbar() {
                 AI Assistant
               </Link>
             </li>
+            {user && (
+              <li>
+                <Link href="/account" className="hover:text-yellow-300">
+                  Account
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/about" className="hover:text-yellow-300">
                 About

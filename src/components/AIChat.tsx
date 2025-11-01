@@ -10,8 +10,7 @@ type Message = {
   role: "user" | "assistant";
   text: string;
 };
-
-export default function AIChat() {
+export default function AIChat({ full }: { full?: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -214,8 +213,12 @@ export default function AIChat() {
     return false;
   };
 
+  const rootClass = full
+    ? "w-full min-h-[calc(100vh-64px)] p-4 bg-white dark:bg-gray-800"
+    : "max-w-3xl mx-auto bg-white rounded-lg shadow p-4";
+
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-4">
+    <div className={rootClass}>
       <h2 className="text-2xl font-semibold mb-4">AI Assistant</h2>
       <div
         ref={listRef}

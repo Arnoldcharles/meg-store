@@ -6,8 +6,8 @@ export const metadata = {
 
 export default function AIPage() {
   return (
-    <div className="container mx-auto px-4 py-24">
-      <AIChat />
-    </div>
+    <main className="w-full">
+      <AIChat full />
+    </main>
   );
 }
