@@ -45,6 +45,21 @@ export function getOrderById(userId: string | null | undefined, id: string): Ord
   return orders.find((o) => o.id === id) || null;
 }
 
+export function generateOrderId(prefix?: string) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = pad(now.getMonth() + 1);
+  const d = pad(now.getDate());
+  const hh = pad(now.getHours());
+  const mm = pad(now.getMinutes());
+  const ss = pad(now.getSeconds());
+  const rand = Math.floor(Math.random() * 0xffff).toString(16).padStart(4, "0");
+  const id = `ORD-${y}${m}${d}-${hh}${mm}${ss}-${rand}`.toUpperCase();
+  if (prefix) return `${prefix}_${id}`;
+  return id;
+}
+
 export function getAllOrders(): Order[] {
   try {
     const all: Order[] = [];

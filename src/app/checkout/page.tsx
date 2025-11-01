@@ -2,7 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { saveOrder } from "@/lib/orders";
+import { saveOrder, generateOrderId } from "@/lib/orders";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import countryStateData from "@/lib/countryState";
@@ -87,7 +87,7 @@ export default function CheckoutPage() {
         if (response.status === "successful") {
           // build order object and persist locally (per-user)
           const order = {
-            id: response.tx_ref || `order_${Date.now()}`,
+            id: generateOrderId(user?.uid ? String(user.uid).slice(0, 6) : undefined),
             userId: user?.uid || null,
             items: cart,
             total: Number(getCartTotal().toFixed(2)),
