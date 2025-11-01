@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -13,7 +14,40 @@ export default function CartPage() {
     clearCart,
     getCartCount,
     getCartTotal,
+    getDeliveryFee,
+    getGrandTotal,
   } = useCart();
+
+  const [updatingIds, setUpdatingIds] = useState<string[]>([]);
+  const [clearing, setClearing] = useState(false);
+
+  const markUpdating = (id: string) => setUpdatingIds((s) => Array.from(new Set([...s, id])));
+  const unmarkUpdating = (id: string) => setUpdatingIds((s) => s.filter((x) => x !== id));
+
+  const handleIncrease = (id: string, currentQty: number) => {
+    markUpdating(id);
+    // update immediately, keep spinner for a tiny moment for UX
+    updateQuantity(id, currentQty + 1);
+    setTimeout(() => unmarkUpdating(id), 160);
+  };
+
+  const handleDecrease = (id: string, currentQty: number) => {
+    markUpdating(id);
+    updateQuantity(id, Math.max(0, currentQty - 1));
+    setTimeout(() => unmarkUpdating(id), 160);
+  };
+
+  const handleRemove = (id: string) => {
+    markUpdating(id);
+    removeFromCart(id);
+    setTimeout(() => unmarkUpdating(id), 160);
+  };
+
+  const handleClear = () => {
+    setClearing(true);
+    clearCart();
+    setTimeout(() => setClearing(false), 300);
+  };
 
   if (cart.length === 0) {
     return (
@@ -36,14 +70,16 @@ export default function CartPage() {
       <div className="grid lg:grid-cols-3 gap-10">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-6">
-          {cart.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center justify-between border rounded-lg p-4 shadow"
-            >
+          {cart.map((item) => {
+            const isUpdating = updatingIds.includes(item.id) || clearing;
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`flex items-center justify-between border rounded-lg p-4 shadow ${isUpdating ? "opacity-80" : ""}`}
+              >
               {/* Product Info */}
               <div className="flex items-center gap-4">
                 <Image
@@ -64,17 +100,33 @@ export default function CartPage() {
               {/* Quantity Controls */}
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  onClick={() => handleDecrease(item.id, item.quantity)}
                   className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                  disabled={isUpdating}
                 >
-                  -
+                  {updatingIds.includes(item.id) ? (
+                    <svg className="animate-spin h-4 w-4 text-gray-600" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                  ) : (
+                    "-"
+                  )}
                 </button>
                 <span>{item.quantity}</span>
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => handleIncrease(item.id, item.quantity)}
                   className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                  disabled={isUpdating}
                 >
-                  +
+                  {updatingIds.includes(item.id) ? (
+                    <svg className="animate-spin h-4 w-4 text-gray-600" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                  ) : (
+                    "+"
+                  )}
                 </button>
               </div>
 
@@ -84,21 +136,35 @@ export default function CartPage() {
                   ₦{(item.price * item.quantity).toFixed(2)}
                 </p>
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => handleRemove(item.id)}
                   className="text-red-500 text-sm hover:underline"
+                  disabled={isUpdating}
                 >
-                  Remove
+                  {updatingIds.includes(item.id) ? (
+                    <svg className="animate-spin h-4 w-4 text-red-500 inline-block" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                  ) : (
+                    "Remove"
+                  )}
                 </button>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
 
           {/* Clear Cart */}
           <button
-            onClick={clearCart}
+            onClick={handleClear}
             className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition"
+            disabled={clearing}
           >
-            Clear Cart
+            {clearing ? (
+              <span className="inline-flex items-center gap-2"><svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Clearing...</span>
+            ) : (
+              "Clear Cart"
+            )}
           </button>
         </div>
 
@@ -109,11 +175,17 @@ export default function CartPage() {
             <span>Total Items :</span>
             <span>{getCartCount()}</span>
           </div>
+          <div className="flex justify-between mb-2">
+            <span>Subtotal:</span>
+            <span className="font-bold">₦ {getCartTotal().toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between mb-2">
+            <span>Delivery:</span>
+            <span className="font-bold">₦ {getDeliveryFee().toFixed(2)}</span>
+          </div>
           <div className="flex justify-between mb-4">
-            <span>Total Price:</span>
-            <span className="font-bold text-green-600">
-              ₦ {getCartTotal().toFixed(2)}
-            </span>
+            <span>Total:</span>
+            <span className="font-bold text-green-600">₦ {getGrandTotal().toFixed(2)}</span>
           </div>
 
           {/* ✅ Checkout Link */}

@@ -14,7 +14,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
-  const { cart, getCartTotal, clearCart } = useCart();
+  const { cart, getCartTotal, clearCart, getDeliveryFee, getGrandTotal } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -72,7 +72,7 @@ export default function CheckoutPage() {
     window.FlutterwaveCheckout({
       public_key: "FLWPUBK-f581b6f4a50dfa5f033d7e823ec7211c-X",
       tx_ref: orderId,
-      amount: getCartTotal(),
+      amount: getGrandTotal(),
       currency: "NGN",
       payment_options:
         "card, account, banktransfer, ussd, nqr, internetbanking, opay, payattitude, enaira, barter, mobilemoneyghana, mobilemoneyuganda, mobilemoneyrwanda, mobilemoneyzambia, mobilemoneytanzania, mobilemoneyfranco, mpesa, paga, applepay, googlepay, paypal, ach, credit",
@@ -89,11 +89,15 @@ export default function CheckoutPage() {
       callback: function (response: any) {
         if (response.status === "successful") {
           // build order object and persist locally (per-user). Use orderId (tx_ref) so it's consistent.
+          const subtotal = Number(getCartTotal().toFixed(2));
+          const deliveryFee = Number(getDeliveryFee().toFixed(2));
           const order = {
             id: response.tx_ref || orderId,
             userId: user?.uid || null,
             items: cart,
-            total: Number(getCartTotal().toFixed(2)),
+            subtotal,
+            deliveryFee,
+            total: Number((subtotal + deliveryFee).toFixed(2)),
             status: "pending",
             createdAt: Date.now(),
             trackingNumber: response.flw_ref || undefined,
@@ -115,7 +119,8 @@ export default function CheckoutPage() {
               order_items: cart
                 .map((i) => `${i.name} x${i.quantity}`)
                 .join(", "),
-              total_amount: getCartTotal().toFixed(2),
+              total_amount: getGrandTotal().toFixed(2),
+              order_id: order.id,
             }),
           })
             .then((res) => res.json())

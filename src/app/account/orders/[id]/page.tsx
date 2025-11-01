@@ -45,6 +45,12 @@ export default function OrderDetail(props: any) {
           <div>
             <div className="font-semibold">Total</div>
             <div className="text-green-600 font-bold">₦{order.total.toFixed(2)}</div>
+            {order.subtotal !== undefined && (
+              <div className="text-sm text-gray-500">Subtotal: ₦{order.subtotal.toFixed(2)}</div>
+            )}
+            {order.deliveryFee !== undefined && (
+              <div className="text-sm text-gray-500">Delivery: ₦{order.deliveryFee.toFixed(2)}</div>
+            )}
           </div>
         </div>
       </div>

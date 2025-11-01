@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Product } from "@/lib/products";
+import { calculateDeliveryFee } from "@/lib/shipping";
 
 type CartItem = Product & { quantity: number };
 
@@ -13,6 +14,8 @@ interface CartContextType {
   clearCart: () => void;
   getCartCount: () => number;
   getCartTotal: () => number;
+  getDeliveryFee: () => number;
+  getGrandTotal: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -81,6 +84,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const getDeliveryFee = () => {
+    // reuse shipping helper
+    return calculateDeliveryFee(cart as any);
+  };
+
+  const getGrandTotal = () => {
+    return getCartTotal() + getDeliveryFee();
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -91,6 +103,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         clearCart,
         getCartCount,
         getCartTotal,
+        getDeliveryFee,
+        getGrandTotal,
       }}
     >
       {children}

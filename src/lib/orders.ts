@@ -6,6 +6,8 @@ export type Order = {
   id: string;
   userId?: string | null;
   items: OrderItem[];
+  subtotal?: number;
+  deliveryFee?: number;
   total: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   createdAt: number;
