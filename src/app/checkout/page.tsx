@@ -66,9 +66,12 @@ export default function CheckoutPage() {
 
     setLoading(true);
 
+    // generate a stable order id and use it as the payment tx_ref so the provider and our records match
+    const orderId = generateOrderId(user?.uid ? String(user.uid).slice(0, 6) : undefined);
+
     window.FlutterwaveCheckout({
       public_key: "FLWPUBK-f581b6f4a50dfa5f033d7e823ec7211c-X",
-      tx_ref: `megstore_${Date.now()}`,
+      tx_ref: orderId,
       amount: getCartTotal(),
       currency: "NGN",
       payment_options:
@@ -85,9 +88,9 @@ export default function CheckoutPage() {
       },
       callback: function (response: any) {
         if (response.status === "successful") {
-          // build order object and persist locally (per-user)
+          // build order object and persist locally (per-user). Use orderId (tx_ref) so it's consistent.
           const order = {
-            id: generateOrderId(user?.uid ? String(user.uid).slice(0, 6) : undefined),
+            id: response.tx_ref || orderId,
             userId: user?.uid || null,
             items: cart,
             total: Number(getCartTotal().toFixed(2)),

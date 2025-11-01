@@ -5,20 +5,22 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { getOrderById, Order } from "@/lib/orders";
 
-export default function OrderDetail({ params }: { params: { id: string } }) {
+export default function OrderDetail(props: any) {
+  const { params } = props || {};
   const { user } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const o = getOrderById(user?.uid || null, params.id);
+    const id = params?.id;
+    const o = getOrderById(user?.uid || null, id);
     if (!o) {
       // redirect to orders
       router.replace("/account/orders");
       return;
     }
     setOrder(o);
-  }, [params.id, user]);
+  }, [params?.id, user]);
 
   if (!order) return null;
 
