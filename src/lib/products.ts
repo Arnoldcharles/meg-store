@@ -9,6 +9,7 @@ export type Product = {
   category: string;
   stock: number;
   bestSeller?: boolean;
+  discount?: number; // optional per-product discount in percent (e.g., 10 = 10% off)
   createdAt?: string;
 };
 
@@ -22,6 +23,7 @@ export const products: Product[] = [
     category: "Oil",
     stock: 10,
     bestSeller: false,
+    discount: 5,
     createdAt: "2025-09-22T14:30:00Z",
   },
   {
@@ -44,6 +46,7 @@ export const products: Product[] = [
     category: "Oil",
     stock: 15,
     bestSeller: true,
+    discount: 10,
     createdAt: "2025-09-18T08:15:00Z",
   },
   {
@@ -112,6 +115,7 @@ export const products: Product[] = [
     bestSeller: false,
     createdAt: "2025-09-22T14:30:00Z",
   },
+
   {
     id: "10567890128",
     name: "Egusi (Melon) 1 derica",
@@ -179,6 +183,21 @@ export const products: Product[] = [
     createdAt: "2025-09-16T12:00:00Z",
   },
 ];
+
+// Coupon definitions. Place coupon codes and how they apply here.
+export type Coupon =
+  | { code: string; type: "percent"; value: number; appliesTo: "order" }
+  | { code: string; type: "percent"; value: number; appliesTo: "category"; category: string }
+  | { code: string; type: "fixed"; value: number; appliesTo: "product"; productId: string };
+
+export const coupons: Record<string, Coupon> = {
+  // 10% off entire order
+  MEG10: { code: "MEG10", type: "percent", value: 10, appliesTo: "order" },
+  // 5% off Oil category
+  OIL5: { code: "OIL5", type: "percent", value: 5, appliesTo: "category", category: "Oil" },
+  // Flat 50 off specific product
+  STOCK50: { code: "STOCK50", type: "fixed", value: 50, appliesTo: "product", productId: "447890123" },
+};
 
 // ✅ Get all products
 export function getProducts(): Product[] {

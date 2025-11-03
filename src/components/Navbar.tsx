@@ -2,17 +2,21 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCompare } from "@/context/CompareContext";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useToast } from "@/components/ToastProvider";
-import { FaShoppingCart, FaUser, FaHome, FaBox, FaRobot } from "react-icons/fa";
+import { FaShoppingCart, FaUser, FaHome, FaBox, FaRobot, FaHeart, FaBalanceScale } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { getCartCount } = useCart();
+  const { getCount: getWishlistCount } = useWishlist();
+  const { getCount: getCompareCount } = useCompare();
   const { addToast } = useToast();
   const pathname = usePathname();
   const [active, setActive] = useState("home");
@@ -95,6 +99,23 @@ export default function Navbar() {
 
           {/* Desktop Icons + Auth */}
           <div className="hidden md:flex items-center gap-6">
+            <Link href="/wishlist" className="relative">
+              <FaHeart className="w-5 h-5 hover:text-yellow-300" />
+              {getWishlistCount() > 0 && (
+                <motion.span className="absolute -top-2 -right-2 bg-pink-500 text-white text-xs font-bold px-2 rounded-full">
+                  {getWishlistCount()}
+                </motion.span>
+              )}
+            </Link>
+
+            <Link href="/compare" className="relative">
+              <FaBalanceScale className="w-5 h-5 hover:text-yellow-300" />
+              {getCompareCount() > 0 && (
+                <motion.span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold px-2 rounded-full">
+                  {getCompareCount()}
+                </motion.span>
+              )}
+            </Link>
             <Link href="/cart" className="relative" data-cart-icon>
               <FaShoppingCart className="w-6 h-6 hover:text-yellow-300" />
               {getCartCount() > 0 && (
@@ -212,6 +233,35 @@ export default function Navbar() {
             </motion.div>
           </Link>
 
+          {/* Wishlist (Mobile) */}
+          <Link
+            href="/wishlist"
+            onClick={() => setActive("wishlist")}
+            className="relative flex flex-col items-center"
+            aria-label="Wishlist"
+            title="Wishlist"
+          >
+            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+              <FaHeart
+                className={`w-6 h-6 ${active === "wishlist" ? "text-yellow-300" : "text-white"}`}
+              />
+              {getWishlistCount() > 0 && (
+                <motion.span className="absolute -top-1 -right-3 bg-pink-500 text-white text-xs font-bold px-2 rounded-full">
+                  {getWishlistCount()}
+                </motion.span>
+              )}
+            </motion.div>
+            {active === "wishlist" && (
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs mt-1"
+              >
+                Wishlist
+              </motion.span>
+            )}
+          </Link>
+
           {/* Cart */}
           <Link
             href="/cart"
@@ -249,6 +299,35 @@ export default function Navbar() {
               </motion.span>
             )}
           </Link>
+
+            {/* Compare (Mobile) */}
+            <Link
+              href="/compare"
+              onClick={() => setActive("compare")}
+              className="relative flex flex-col items-center"
+              aria-label="Compare"
+              title="Compare"
+            >
+              <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+                <FaBalanceScale
+                  className={`w-6 h-6 ${active === "compare" ? "text-yellow-300" : "text-white"}`}
+                />
+                {getCompareCount() > 0 && (
+                  <motion.span className="absolute -top-1 -right-3 bg-indigo-500 text-white text-xs font-bold px-2 rounded-full">
+                    {getCompareCount()}
+                  </motion.span>
+                )}
+              </motion.div>
+              {active === "compare" && (
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs mt-1"
+                >
+                  Compare
+                </motion.span>
+              )}
+            </Link>
 
           {/* Account */}
           <Link

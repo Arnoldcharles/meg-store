@@ -14,6 +14,10 @@ import {
   List,
   Search,
 } from "lucide-react";
+import { FaHeart, FaBalanceScale } from "react-icons/fa";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCompare } from "@/context/CompareContext";
+import { useToast } from "@/components/ToastProvider";
 
 export default function ProductsPage() {
   const [visibleCount, setVisibleCount] = useState(8);
@@ -73,6 +77,10 @@ export default function ProductsPage() {
   }
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
+
+  const { toggle: toggleWishlist, contains: inWishlist } = useWishlist();
+  const { toggle: toggleCompare, contains: inCompare } = useCompare();
+  const { addToast } = useToast();
 
   const handleLoadMore = () => {
     setLoading(true);
@@ -305,12 +313,36 @@ export default function ProductsPage() {
                     <h3 className="font-semibold text-gray-800">{product.name}</h3>
                     <p className="text-sm text-gray-500 mb-2">{product.category}</p>
                     <p className="text-green-600 font-bold mb-3">₦{product.price}</p>
-                    <Link
-                      href={`/products/${product.id}`}
-                      className="inline-block bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition"
-                    >
-                      View Details
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/products/${product.id}`}
+                        className="inline-block bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition"
+                      >
+                        View Details
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          toggleWishlist(product);
+                          try { addToast(inWishlist(product.id) ? `${product.name} removed from wishlist` : `${product.name} added to wishlist`, "info", 1500); } catch (e) {}
+                        }}
+                        className={`p-2 rounded ${inWishlist(product.id) ? 'text-pink-600' : 'text-gray-600'}`}
+                        aria-label="Toggle wishlist"
+                      >
+                        <FaHeart />
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          toggleCompare(product);
+                          try { addToast(inCompare(product.id) ? `${product.name} removed from compare` : `${product.name} added to compare`, "info", 1500); } catch (e) {}
+                        }}
+                        className={`p-2 rounded ${inCompare(product.id) ? 'text-indigo-600' : 'text-gray-600'}`}
+                        aria-label="Toggle compare"
+                      >
+                        <FaBalanceScale />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               ))}

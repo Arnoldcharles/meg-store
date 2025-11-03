@@ -10,6 +10,9 @@ import { useToast } from "@/components/ToastProvider";
 import ProductQuickView from "@/components/ProductQuickView";
 import flyToCart from "@/lib/flyToCart";
 import { ProductSkeleton } from "@/components/Skeletons";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCompare } from "@/context/CompareContext";
+import { FaHeart, FaBalanceScale } from "react-icons/fa";
 
 export default function FeaturedProducts() {
   // Pick only 5 products
@@ -18,6 +21,8 @@ export default function FeaturedProducts() {
   const [current, setCurrent] = useState(0);
   const { addToCart } = useCart();
   const { addToast } = useToast();
+  const { toggle: toggleWishlist, contains: inWishlist } = useWishlist();
+  const { toggle: toggleCompare, contains: inCompare } = useCompare();
   const [loading, setLoading] = useState(true);
   const [quickProduct, setQuickProduct] = useState<any>(null);
 
@@ -82,6 +87,29 @@ export default function FeaturedProducts() {
                       <button onClick={() => setQuickProduct(product)} className="w-1/3 bg-white text-gray-800 border border-gray-300 py-2 rounded-lg text-center hover:bg-gray-50 transition">
                         Quick View
                       </button>
+                      <div className="flex gap-2 ml-2 items-center">
+                        <button
+                          onClick={() => {
+                            toggleWishlist(product);
+                            try { addToast(inWishlist(product.id) ? `${product.name} removed from wishlist` : `${product.name} added to wishlist`, "info", 1800); } catch (e) {}
+                          }}
+                          aria-label="Toggle wishlist"
+                          className={`p-2 rounded ${inWishlist(product.id) ? 'text-pink-600' : 'text-gray-600'}`}
+                        >
+                          <FaHeart />
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            toggleCompare(product);
+                            try { addToast(inCompare(product.id) ? `${product.name} removed from compare` : `${product.name} added to compare`, "info", 1800); } catch (e) {}
+                          }}
+                          aria-label="Toggle compare"
+                          className={`p-2 rounded ${inCompare(product.id) ? 'text-indigo-600' : 'text-gray-600'}`}
+                        >
+                          <FaBalanceScale />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import Image from "next/image";
+import { uniqueId } from "@/lib/uid";
 
 type Message = {
   id: string;
@@ -64,7 +65,7 @@ export default function AIChat({ full }: { full?: boolean }) {
     const text = input.trim();
     if (!text) return;
 
-    const userMsg: Message = { id: `u-${Date.now()}`, role: "user", text };
+  const userMsg: Message = { id: uniqueId("u"), role: "user", text };
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setLoading(true);
@@ -85,32 +86,32 @@ export default function AIChat({ full }: { full?: boolean }) {
 
       // If structured results are returned, append them as a special assistant message
       if (ingredients && ingredients.length > 0) {
-        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
+        const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
         setMessages((m) => [...m, assistantMsg]);
         setTimeout(() => {
           setMessages((m) => [
             ...m,
-            { id: `ing-${Date.now()}`, role: "assistant", text: JSON.stringify({ ingredients }) },
+            { id: uniqueId("ing"), role: "assistant", text: JSON.stringify({ ingredients }) },
           ]);
         }, 50);
       } else if (Array.isArray(data?.results) && data.results.length > 0) {
-        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
+        const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
         setMessages((m) => [...m, assistantMsg]);
         // Append a pseudo-message for results (client will render results from latest API response state)
         setTimeout(() => {
           setMessages((m) => [
             ...m,
-            { id: `r-${Date.now()}`, role: "assistant", text: JSON.stringify(data.results) },
+            { id: uniqueId("r"), role: "assistant", text: JSON.stringify(data.results) },
           ]);
         }, 50);
       } else {
-        const assistantMsg: Message = { id: `a-${Date.now()}`, role: "assistant", text: reply };
-        setMessages((m) => [...m, assistantMsg]);
+  const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
+  setMessages((m) => [...m, assistantMsg]);
       }
     } catch (err: any) {
-      setMessages((m) => [
+        setMessages((m) => [
         ...m,
-        { id: `a-err-${Date.now()}`, role: "assistant", text: err?.message || "There was an error contacting the AI service." },
+        { id: uniqueId("a-err"), role: "assistant", text: err?.message || "There was an error contacting the AI service." },
       ]);
     } finally {
       setLoading(false);
