@@ -21,6 +21,8 @@ export default function CartPage() {
   const [updatingIds, setUpdatingIds] = useState<string[]>([]);
   const [clearing, setClearing] = useState(false);
 
+  const isAnyUpdating = updatingIds.length > 0 || clearing;
+
   const markUpdating = (id: string) => setUpdatingIds((s) => Array.from(new Set([...s, id])));
   const unmarkUpdating = (id: string) => setUpdatingIds((s) => s.filter((x) => x !== id));
 
@@ -175,17 +177,35 @@ export default function CartPage() {
             <span>Total Items :</span>
             <span>{getCartCount()}</span>
           </div>
-          <div className="flex justify-between mb-2">
+          <div className="flex justify-between mb-2 items-center">
             <span>Subtotal:</span>
-            <span className="font-bold">₦ {getCartTotal().toFixed(2)}</span>
+            <span className="font-bold">
+              {isAnyUpdating ? (
+                <svg className="animate-spin inline-block h-4 w-4 text-gray-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              ) : (
+                `₦ ${getCartTotal().toFixed(2)}`
+              )}
+            </span>
           </div>
-          <div className="flex justify-between mb-2">
+          <div className="flex justify-between mb-2 items-center">
             <span>Delivery:</span>
-            <span className="font-bold">₦ {getDeliveryFee().toFixed(2)}</span>
+            <span className="font-bold">
+              {isAnyUpdating ? (
+                <svg className="animate-spin inline-block h-4 w-4 text-gray-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              ) : (
+                `₦ ${getDeliveryFee().toFixed(2)}`
+              )}
+            </span>
           </div>
-          <div className="flex justify-between mb-4">
+          <div className="flex justify-between mb-4 items-center">
             <span>Total:</span>
-            <span className="font-bold text-green-600">₦ {getGrandTotal().toFixed(2)}</span>
+            <span className="font-bold text-green-600">
+              {isAnyUpdating ? (
+                <svg className="animate-spin inline-block h-4 w-4 text-gray-600" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+              ) : (
+                `₦ ${getGrandTotal().toFixed(2)}`
+              )}
+            </span>
           </div>
 
           {/* ✅ Checkout Link */}

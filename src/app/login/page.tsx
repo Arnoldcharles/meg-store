@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
-import { auth } from "@/lib/firebaseConfig";
+// Note: Firebase removed — auth handled locally via AuthContext
 
 export default function LoginPage() {
   const { user, login, signup, loginWithGoogle, logout, resendVerification } =
@@ -26,18 +26,23 @@ export default function LoginPage() {
   }, [user, router]);
 
   // Refresh user state to catch verification updates
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      if (auth.currentUser) {
-        await auth.currentUser.reload();
-      }
-    }, 3000); // check every 3s
-    return () => clearInterval(interval);
-  }, []);
+  // no-op: local auth stores state in localStorage and updates immediately
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // First, try local admin login (will set is_admin cookie) — this allows admin to sign in via /login
+      const tryAdmin = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (tryAdmin.ok) {
+        // admin logged in — redirect to admin dashboard
+        router.push("/admin");
+        return;
+      }
+
       if (isSignup) {
         await signup(email, password);
         setMessage("Verification email sent. Please check your inbox/spam. Once verified, you can log in.");

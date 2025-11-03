@@ -14,6 +14,9 @@ export default function Navbar() {
   const { getCartCount } = useCart();
   const pathname = usePathname();
   const [active, setActive] = useState("home");
+  const [isAdminSession, setIsAdminSession] = useState(false);
+
+  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "arnoldcharles028@gmail.com";
 
   // Sync active nav with route
   useEffect(() => {
@@ -24,6 +27,22 @@ export default function Navbar() {
     else if (pathname.startsWith("/about")) setActive("about");
   }, [pathname]);
 
+  useEffect(() => {
+    // hide navbar for admin session: check local user email or dev admin cookie
+    if (user && user.email === ADMIN_EMAIL) {
+      setIsAdminSession(true);
+      return;
+    }
+    try {
+      const cookies = typeof document !== "undefined" ? document.cookie : "";
+      setIsAdminSession(cookies.includes("is_admin=1"));
+    } catch (e) {
+      setIsAdminSession(false);
+    }
+  }, [user]);
+
+
+  if (isAdminSession) return null;
 
   return (
     <>

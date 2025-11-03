@@ -25,6 +25,12 @@ export function saveOrder(order: Order) {
     const arr: Order[] = raw ? JSON.parse(raw) : [];
     arr.unshift(order);
     localStorage.setItem(key, JSON.stringify(arr));
+    // attempt to persist the order to the server-side local store
+    try {
+      fetch("/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
+    } catch (e) {
+      // ignore network errors
+    }
     return true;
   } catch (e) {
     console.error("saveOrder error", e);
