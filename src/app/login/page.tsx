@@ -7,10 +7,12 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
 // Note: Firebase removed — auth handled locally via AuthContext
+import { useToast } from "@/components/ToastProvider";
 
 export default function LoginPage() {
   const { user, login, signup, loginWithGoogle, logout, resendVerification } =
     useAuth();
+  const { addToast } = useToast();
   const router = useRouter();
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -39,6 +41,7 @@ export default function LoginPage() {
       });
       if (tryAdmin.ok) {
         // admin logged in — redirect to admin dashboard
+        addToast("Admin signed in", "success", 2000);
         router.push("/admin");
         return;
       }
@@ -46,19 +49,24 @@ export default function LoginPage() {
       if (isSignup) {
         await signup(email, password);
         setMessage("Verification email sent. Please check your inbox/spam. Once verified, you can log in.");
+        addToast("Verification email sent", "info", 3000);
       } else {
         await login(email, password);
+        addToast("Logged in", "success", 2000);
       }
     } catch (err: any) {
       setError(err.message);
+      try { addToast(err.message || "Login error", "error", 3000); } catch(e){}
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
+      addToast("Logged in with Google", "success", 2000);
     } catch (err: any) {
       setError(err.message);
+      try { addToast(err.message || "Google login failed", "error", 3000); } catch(e){}
     }
   };
 
@@ -66,8 +74,10 @@ export default function LoginPage() {
     try {
       await resendVerification();
       setMessage("Verification email resent. Please check your inbox.");
+      addToast("Verification email resent", "info", 2500);
     } catch (err: any) {
       setError(err.message);
+      try { addToast(err.message || "Resend failed", "error", 3000); } catch(e){}
     }
   };
 
@@ -174,7 +184,7 @@ export default function LoginPage() {
                   Resend Email
                 </button>
                 <button
-                  onClick={logout}
+                  onClick={() => { logout(); try { addToast("Logged out", "info", 2000); } catch(e){} }}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400"
                 >
                   Logout

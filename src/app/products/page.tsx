@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { products } from "@/lib/products";
+import { ProductSkeleton } from "@/components/Skeletons";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,18 +17,36 @@ import {
 
 export default function ProductsPage() {
   const [visibleCount, setVisibleCount] = useState(8);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // for load more
+  const [initialLoading, setInitialLoading] = useState(true); // initial page skeleton
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortOption, setSortOption] = useState<string>("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState<string>("");
+  
 
   const categories = Array.from(new Set(products.map((p) => p.category)));
 
+  // Shuffle the product order on each mount so the page looks fresh on reload
+  const [shuffledProducts, setShuffledProducts] = useState(() => products.slice());
+
+  useEffect(() => {
+    const shuffle = (arr: typeof products) => {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    setShuffledProducts((_) => shuffle(products));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   let filteredProducts = selectedCategory
-    ? products.filter((p) => p.category === selectedCategory)
-    : products;
+    ? shuffledProducts.filter((p) => p.category === selectedCategory)
+    : shuffledProducts;
 
   // Search filter
   if (searchTerm.trim() !== "") {
@@ -62,6 +81,12 @@ export default function ProductsPage() {
       setLoading(false);
     }, 1000);
   };
+
+  // Simulate short initial load to show skeletons
+  useEffect(() => {
+    const t = setTimeout(() => setInitialLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 md:p-12">
@@ -253,38 +278,42 @@ export default function ProductsPage() {
               : "space-y-6"
           }
         >
-          {visibleProducts.map((product) => (
-            <motion.div
-              key={product.id}
-              whileHover={{ scale: 1.02 }}
-              className={`bg-white rounded-xl shadow p-4 transition ${
-                viewMode === "list" ? "flex gap-4 items-center" : ""
-              }`}
-            >
-              <Image
-                src={product.image || "/placeholder.jpg"}
-                alt={product.name || "Product"}
-                width={200}
-                height={200}
-                className={`object-contain ${
-                  viewMode === "grid" ? "w-full h-40 mb-3" : "w-32 h-32"
-                }`}
-              />
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-                <p className="text-green-600 font-bold mb-3">
-                  ₦{product.price}
-                </p>
-                <Link
-                  href={`/products/${product.id}`}
-                  className="inline-block bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition"
+          {initialLoading
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <div key={"sk" + i} className={viewMode === "grid" ? "" : "py-2"}>
+                  <ProductSkeleton />
+                </div>
+              ))
+            : visibleProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  whileHover={{ scale: 1.02 }}
+                  className={`bg-white rounded-xl shadow p-4 transition ${
+                    viewMode === "list" ? "flex gap-4 items-center" : ""
+                  }`}
                 >
-                  View Details
-                </Link>
-              </div>
-            </motion.div>
-          ))}
+                  <Image
+                    src={product.image || "/placeholder.jpg"}
+                    alt={product.name || "Product"}
+                    width={200}
+                    height={200}
+                    className={`object-contain ${
+                      viewMode === "grid" ? "w-full h-40 mb-3" : "w-32 h-32"
+                    }`}
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800">{product.name}</h3>
+                    <p className="text-sm text-gray-500 mb-2">{product.category}</p>
+                    <p className="text-green-600 font-bold mb-3">₦{product.price}</p>
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="inline-block bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
         </div>
 
         {/* Load More */}

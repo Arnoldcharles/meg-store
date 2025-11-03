@@ -5,6 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { saveOrder, generateOrderId } from "@/lib/orders";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useToast } from "@/components/ToastProvider";
 import countryStateData from "@/lib/countryState";
 
 declare global {
@@ -16,6 +17,7 @@ declare global {
 export default function CheckoutPage() {
   const { cart, getCartTotal, clearCart, getDeliveryFee, getGrandTotal } = useCart();
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -124,20 +126,18 @@ export default function CheckoutPage() {
             }),
           })
             .then((res) => res.json())
-            .then(() => {
-              alert("Payment successful! Order details sent to admin.");
-              clearCart();
-            })
+              .then(() => {
+                addToast("Payment successful! Order sent to admin.", "success", 3000);
+                clearCart();
+              })
             .catch((err) => {
               console.error("SendGrid email error:", err);
-              alert(
-                "Payment successful, but failed to send order to admin. Please contact support."
-              );
+                addToast("Payment succeeded but failed to notify admin. Contact support.", "error", 5000);
             })
             .finally(() => setLoading(false));
         } else {
           setLoading(false);
-          alert("Payment failed or cancelled.");
+            addToast("Payment failed or cancelled.", "error", 2500);
         }
       },
       onclose: function () {

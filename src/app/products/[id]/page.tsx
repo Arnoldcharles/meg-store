@@ -5,7 +5,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { products } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useToast } from "@/components/ToastProvider";
+import flyToCart from "@/lib/flyToCart";
+import { ProductSkeleton } from "@/components/Skeletons";
 import Link from "next/link";
 import PromoImageBanner from "@/components/PromoImageBanner";
 
@@ -19,38 +22,67 @@ export default function ProductDetailsPage() {
   const { cart, addToCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const { addToast } = useToast();
 
   const product = products.find((p) => p.id === id);
 
   // Check if product is already in cart
   const isInCart = cart.some((item) => item.id === product?.id);
 
-  // Related products
-  const relatedProducts = products
-    .filter((p) => p.category === product?.category && p.id !== id)
-    .slice(0, 4);
+  // Related products (will shuffle on mount)
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>(
+    products.filter((p) => p.category === product?.category && p.id !== id)
+  );
 
   useEffect(() => {
     if (!product) {
       router.push("/products");
-    } else {
-      setLoading(false);
+      return;
     }
-  }, [product, router]);
+
+    // shuffle related products on each mount
+    const rel = products.filter((p) => p.category === product?.category && p.id !== id);
+    for (let i = rel.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rel[i], rel[j]] = [rel[j], rel[i]];
+    }
+    setRelatedProducts(rel.slice(0, 4));
+
+    // simulate small load for skeleton
+    const t = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(t);
+  }, [product, router, id]);
 
   const handleAddToCart = () => {
     if (adding || isInCart) return;
     setAdding(true);
     setTimeout(() => {
       addToCart({ ...(product as Product), quantity: 1 } as CartProduct);
+      // fly-to-cart and toast
+      try {
+        const rect = imgRef.current ? imgRef.current.getBoundingClientRect() : null;
+        flyToCart(product?.image || "/placeholder.jpg", rect as any);
+      } catch (e) {}
+      try { addToast(`${product?.name} added to cart`, "success", 2000); } catch(e){}
       setAdding(false);
     }, 1000);
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full"></div>
+      <div className="container mx-auto px-4 py-10">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <ProductSkeleton />
+          </div>
+          <div className="space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-3/4 animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse" />
+            <div className="h-10 bg-gray-200 rounded w-1/3 animate-pulse" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -64,7 +96,8 @@ export default function ProductDetailsPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Image
+          <img
+            ref={imgRef}
             src={product?.image || "/placeholder.jpg"}
             alt={product?.name || "Product"}
             width={500}

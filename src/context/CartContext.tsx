@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { useToast } from "@/components/ToastProvider";
 import { Product } from "@/lib/products";
 import { calculateDeliveryFee } from "@/lib/shipping";
 
@@ -22,6 +23,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { addToast } = useToast();
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -53,7 +55,33 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   // Remove product from cart
   const removeFromCart = (id: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    // compute removed item from current cart, update state, then show toast
+    const removed = cart.find((i) => i.id === id);
+    if (!removed) return;
+
+    const next = cart.filter((item) => item.id !== id);
+    setCart(next);
+
+    // show undo toast with action — call after updating state to avoid
+    // triggering a state update in ToastProvider during CartProvider render
+    try {
+      addToast(`${removed.name} removed`, "info", 6000, {
+        label: "Undo",
+        onClick: () => {
+          setCart((cur) => {
+            // if item already present, just increase quantity
+            const exists = cur.find((c) => c.id === removed.id);
+            if (exists) {
+              return cur.map((c) =>
+                c.id === removed.id ? { ...c, quantity: c.quantity + removed.quantity } : c
+              );
+            }
+            // re-insert removed item at front
+            return [removed, ...cur];
+          });
+        },
+      });
+    } catch (e) {}
   };
 
   // Update quantity of a product

@@ -5,6 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useToast } from "@/components/ToastProvider";
 import { FaShoppingCart, FaUser, FaHome, FaBox, FaRobot } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +13,7 @@ import Link from "next/link";
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { getCartCount } = useCart();
+  const { addToast } = useToast();
   const pathname = usePathname();
   const [active, setActive] = useState("home");
   const [isAdminSession, setIsAdminSession] = useState(false);
@@ -93,17 +95,28 @@ export default function Navbar() {
 
           {/* Desktop Icons + Auth */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/cart" className="relative">
+            <Link href="/cart" className="relative" data-cart-icon>
               <FaShoppingCart className="w-6 h-6 hover:text-yellow-300" />
               {getCartCount() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 rounded-full">
+                <motion.span
+                  key={getCartCount()}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 700, damping: 20 }}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 rounded-full"
+                >
                   {getCartCount()}
-                </span>
+                </motion.span>
               )}
             </Link>
             {user ? (
               <button
-                onClick={logout}
+                onClick={() => {
+                  logout();
+                  try {
+                    addToast("Logged out", "info", 2000);
+                  } catch (e) {}
+                }}
                 className="bg-yellow-400 text-black px-3 py-1 rounded-lg hover:bg-yellow-300 transition"
               >
                 Logout
@@ -122,7 +135,12 @@ export default function Navbar() {
           <div className="md:hidden">
             {user ? (
               <button
-                onClick={logout}
+                onClick={() => {
+                  logout();
+                  try {
+                    addToast("Logged out", "info", 2000);
+                  } catch (e) {}
+                }}
                 className="bg-yellow-400 text-black px-3 py-1 rounded-lg hover:bg-yellow-300 transition"
               >
                 Logout
@@ -147,21 +165,25 @@ export default function Navbar() {
             href="/"
             onClick={() => setActive("home")}
             className="flex flex-col items-center"
+            aria-label="Home"
+            title="Home"
           >
-            <FaHome
-              className={`w-6 h-6 ${
-                active === "home" ? "text-yellow-300" : "text-white"
-              }`}
-            />
-            {active === "home" && (
-              <motion.span
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs mt-1"
-              >
-                Home
-              </motion.span>
-            )}
+            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+              <FaHome
+                className={`w-6 h-6 ${
+                  active === "home" ? "text-yellow-300" : "text-white"
+                }`}
+              />
+              {active === "home" && (
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs mt-1"
+                >
+                  Home
+                </motion.span>
+              )}
+            </motion.div>
           </Link>
 
           {/* Products */}
@@ -169,21 +191,25 @@ export default function Navbar() {
             href="/products"
             onClick={() => setActive("products")}
             className="flex flex-col items-center"
+            aria-label="Products"
+            title="Products"
           >
-            <FaBox
-              className={`w-6 h-6 ${
-                active === "products" ? "text-yellow-300" : "text-white"
-              }`}
-            />
-            {active === "products" && (
-              <motion.span
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs mt-1"
-              >
-                Products
-              </motion.span>
-            )}
+            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+              <FaBox
+                className={`w-6 h-6 ${
+                  active === "products" ? "text-yellow-300" : "text-white"
+                }`}
+              />
+              {active === "products" && (
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs mt-1"
+                >
+                  Products
+                </motion.span>
+              )}
+            </motion.div>
           </Link>
 
           {/* Cart */}
@@ -191,17 +217,28 @@ export default function Navbar() {
             href="/cart"
             onClick={() => setActive("cart")}
             className="relative flex flex-col items-center"
+            data-cart-icon
+            aria-label="Cart"
+            title="Cart"
           >
-            <FaShoppingCart
-              className={`w-6 h-6 ${
-                active === "cart" ? "text-yellow-300" : "text-white"
-              }`}
-            />
-            {getCartCount() > 0 && (
-              <span className="absolute -top-1 -right-3 bg-red-500 text-white text-xs font-bold px-2 rounded-full">
-                {getCartCount()}
-              </span>
-            )}
+            <motion.div whileTap={{ scale: 0.9 }} className="relative flex flex-col items-center">
+              <FaShoppingCart
+                className={`w-6 h-6 ${
+                  active === "cart" ? "text-yellow-300" : "text-white"
+                }`}
+              />
+              {getCartCount() > 0 && (
+                <motion.span
+                  key={getCartCount()}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 700, damping: 20 }}
+                  className="absolute -top-1 -right-3 bg-red-500 text-white text-xs font-bold px-2 rounded-full"
+                >
+                  {getCartCount()}
+                </motion.span>
+              )}
+            </motion.div>
             {active === "cart" && (
               <motion.span
                 initial={{ opacity: 0, y: 5 }}
@@ -218,40 +255,48 @@ export default function Navbar() {
             href="/about"
             onClick={() => setActive("account")}
             className="flex flex-col items-center"
+            aria-label="About"
+            title="About"
           >
-            <FaUser
-              className={`w-6 h-6 ${
-                active === "about" ? "text-yellow-300" : "text-white"
-              }`}
-            />
-            {active === "about" && (
-              <motion.span
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs mt-1"
-              >
-                About
-              </motion.span>
-            )}
+            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+              <FaUser
+                className={`w-6 h-6 ${
+                  active === "about" ? "text-yellow-300" : "text-white"
+                }`}
+              />
+              {active === "about" && (
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs mt-1"
+                >
+                  About
+                </motion.span>
+              )}
+            </motion.div>
           </Link>
           {/* AI */}
           <Link
             href="/ai"
             onClick={() => setActive("ai")}
             className="flex flex-col items-center"
+            aria-label="AI Assistant"
+            title="AI Assistant"
           >
-            <FaRobot
-              className={`w-6 h-6 ${active === "ai" ? "text-yellow-300" : "text-white"}`}
-            />
-            {active === "ai" && (
-              <motion.span
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-xs mt-1"
-              >
-                AI
-              </motion.span>
-            )}
+            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+              <FaRobot
+                className={`w-6 h-6 ${active === "ai" ? "text-yellow-300" : "text-white"}`}
+              />
+              {active === "ai" && (
+                <motion.span
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-xs mt-1"
+                >
+                  AI
+                </motion.span>
+              )}
+            </motion.div>
           </Link>
         </div>
       </div>
