@@ -35,6 +35,26 @@ export default function CheckoutPage() {
     state: "",
   });
 
+  const [agreed, setAgreed] = useState(false);
+  const AGREED_KEY = "meg_store_agreed";
+
+  // restore agreed flag from localStorage for the session
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(AGREED_KEY);
+      if (v !== null) setAgreed(v === "true");
+    } catch (e) {
+      // ignore localStorage errors
+    }
+  }, []);
+
+  const setAgreedAndPersist = (value: boolean) => {
+    setAgreed(value);
+    try {
+      localStorage.setItem(AGREED_KEY, value ? "true" : "false");
+    } catch (e) {}
+  };
+
   const [states, setStates] = useState<string[]>([]);
 
   // Update states when country changes
@@ -92,6 +112,12 @@ export default function CheckoutPage() {
       !form.state
     ) {
       try { addToast("Please fill all required fields.", "error", 3000); } catch (e) {}
+      return;
+    }
+
+    if (!agreed) {
+      try { addToast("You must agree to the Terms & Privacy Policy to complete this purchase.", "error", 3500); } catch (e) {}
+      setLoading(false);
       return;
     }
 
@@ -293,6 +319,12 @@ export default function CheckoutPage() {
             {appliedCoupon && (
               <div className="mt-2 text-sm text-green-700">Applied: <span className="font-medium">{appliedCoupon.code}</span></div>
             )}
+
+            {/* Agreement checkbox in the order summary (left column) */}
+            <label className="mt-3 flex items-start gap-2 text-sm">
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreedAndPersist(e.target.checked)} className="mt-1" />
+              <span>I agree to the <a href="/terms" className="underline">Terms</a> and <a href="/privacy" className="underline">Privacy Policy</a>.</span>
+            </label>
           </div>
         </div>
 
@@ -358,6 +390,10 @@ export default function CheckoutPage() {
             <div className="mt-4 text-xs text-gray-500">
               <div>Secure payment powered by Flutterwave.</div>
               <div className="mt-2">By completing this purchase, you agree to our <a href="/terms" className="underline">Terms</a> and <a href="/privacy" className="underline">Privacy Policy</a>.</div>
+              <label className="mt-3 flex items-start gap-2 text-sm">
+                <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1" />
+                <span>I agree to the <a href="/terms" className="underline">Terms</a> and <a href="/privacy" className="underline">Privacy Policy</a>.</span>
+              </label>
               <div>Charges will be applied for payment processing.</div>
             </div>
           </div>

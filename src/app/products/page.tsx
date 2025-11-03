@@ -92,7 +92,7 @@ export default function ProductsPage() {
 
   // Simulate short initial load to show skeletons
   useEffect(() => {
-    const t = setTimeout(() => setInitialLoading(false), 600);
+    const t = setTimeout(() => setInitialLoading(false), 800);
     return () => clearTimeout(t);
   }, []);
 

@@ -29,7 +29,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((message: string, type: Toast["type"] = "info", duration = 3000, action: Toast["action"] = null) => {
+  const addToast = useCallback((message: string, type: Toast["type"] = "info", duration = 6000, action: Toast["action"] = null) => {
     const id = uniqueId("t");
     const t: Toast = { id, message, type, duration, action };
     setToasts((s) => [t, ...s]);
