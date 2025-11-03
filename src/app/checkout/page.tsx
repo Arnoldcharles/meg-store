@@ -290,7 +290,6 @@ export default function CheckoutPage() {
               <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Enter coupon code" className="flex-1 p-2 border rounded" />
               <button onClick={applyCoupon} className="px-4 py-2 bg-green-600 text-white rounded">Apply</button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Tip: try code MEG10 for 10% off (demo)</p>
             {appliedCoupon && (
               <div className="mt-2 text-sm text-green-700">Applied: <span className="font-medium">{appliedCoupon.code}</span></div>
             )}
@@ -359,6 +358,7 @@ export default function CheckoutPage() {
             <div className="mt-4 text-xs text-gray-500">
               <div>Secure payment powered by Flutterwave.</div>
               <div className="mt-2">By completing this purchase, you agree to our <a href="/terms" className="underline">Terms</a> and <a href="/privacy" className="underline">Privacy Policy</a>.</div>
+              <div>Charges will be applied for payment processing.</div>
             </div>
           </div>
         </div>
