@@ -28,12 +28,13 @@ export default function ProductsPage() {
   const [sortOption, setSortOption] = useState<string>("default");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  
 
   const categories = Array.from(new Set(products.map((p) => p.category)));
 
   // Shuffle the product order on each mount so the page looks fresh on reload
-  const [shuffledProducts, setShuffledProducts] = useState(() => products.slice());
+  const [shuffledProducts, setShuffledProducts] = useState(() =>
+    products.slice()
+  );
 
   useEffect(() => {
     const shuffle = (arr: typeof products) => {
@@ -98,7 +99,7 @@ export default function ProductsPage() {
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-6 md:p-12">
-      {/* Sidebar Filter (desktop only) */} 
+      {/* Sidebar Filter (desktop only) */}
       <aside className="hidden md:block md:w-1/4 bg-gray-100 p-6 rounded-xl shadow-md h-fit sticky top-20">
         <h2 className="text-xl font-semibold mb-4">Filter</h2>
 
@@ -136,10 +137,10 @@ export default function ProductsPage() {
         </div>
 
         {/* Price Filter (placeholder) */}
-        {/*<div>
+        <div>
           <h3 className="font-medium mb-2">Price</h3>
           <p className="text-sm text-gray-500">Coming soon 🔒</p>
-        </div>*/}
+        </div>
       </aside>
 
       {/* Mobile Filter Button */}
@@ -230,7 +231,10 @@ export default function ProductsPage() {
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           {/* Search Bar */}
           <div className="relative w-full md:w-1/3">
-            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+            <Search
+              className="absolute left-3 top-2.5 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Search products..."
@@ -288,7 +292,10 @@ export default function ProductsPage() {
         >
           {initialLoading
             ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={"sk" + i} className={viewMode === "grid" ? "" : "py-2"}>
+                <div
+                  key={"sk" + i}
+                  className={viewMode === "grid" ? "" : "py-2"}
+                >
                   <ProductSkeleton />
                 </div>
               ))
@@ -312,9 +319,15 @@ export default function ProductsPage() {
                     }`}
                   />
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-                    <p className="text-green-600 font-bold mb-3">₦{product.price}</p>
+                    <h3 className="font-semibold text-gray-800">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {product.category}
+                    </p>
+                    <p className="text-green-600 font-bold mb-3">
+                      ₦{product.price}
+                    </p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/products/${product.id}`}
@@ -339,7 +352,11 @@ export default function ProductsPage() {
                             );
                           } catch (e) {}
                         }}
-                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${inWishlist(product.id) ? 'text-pink-600 border' : 'text-gray-600 border'}`}
+                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${
+                          inWishlist(product.id)
+                            ? "text-pink-600 border"
+                            : "text-gray-600 border"
+                        }`}
                         aria-label="Toggle wishlist"
                       >
                         <FaHeart />
@@ -359,14 +376,18 @@ export default function ProductsPage() {
                             );
                           } catch (e) {}
                         }}
-                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${inCompare(product.id) ? 'text-indigo-600 border' : 'text-gray-600 border'}`}
+                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${
+                          inCompare(product.id)
+                            ? "text-indigo-600 border"
+                            : "text-gray-600 border"
+                        }`}
                         aria-label="Toggle compare"
                       >
                         <FaBalanceScale />
                         <span className="hidden sm:inline">Compare</span>
                       </button>
                     </div>
-                    </div>
+                  </div>
                 </motion.div>
               ))}
         </div>
