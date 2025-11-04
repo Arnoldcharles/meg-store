@@ -282,7 +282,7 @@ export default function ProductsPage() {
         <div
           className={
             viewMode === "grid"
-              ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+              ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
               : "space-y-6"
           }
         >
@@ -306,44 +306,67 @@ export default function ProductsPage() {
                     width={200}
                     height={200}
                     className={`object-contain ${
-                      viewMode === "grid" ? "w-full h-40 mb-3" : "w-32 h-32"
+                      viewMode === "grid"
+                        ? "w-full h-48 mb-3 md:h-40"
+                        : "w-32 h-32"
                     }`}
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800">{product.name}</h3>
                     <p className="text-sm text-gray-500 mb-2">{product.category}</p>
                     <p className="text-green-600 font-bold mb-3">₦{product.price}</p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Link
                         href={`/products/${product.id}`}
                         className="inline-block bg-green-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-600 transition"
                       >
                         View Details
                       </Link>
+                    </div>
 
+                    {/* Actions (wishlist/compare) shown below on mobile for larger touch targets */}
+                    <div className="mt-3 flex items-center gap-3">
                       <button
                         onClick={() => {
                           toggleWishlist(product);
-                          try { addToast(inWishlist(product.id) ? `${product.name} removed from wishlist` : `${product.name} added to wishlist`, "info", 1500); } catch (e) {}
+                          try {
+                            addToast(
+                              inWishlist(product.id)
+                                ? `${product.name} removed from wishlist`
+                                : `${product.name} added to wishlist`,
+                              "info",
+                              1500
+                            );
+                          } catch (e) {}
                         }}
-                        className={`p-2 rounded ${inWishlist(product.id) ? 'text-pink-600' : 'text-gray-600'}`}
+                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${inWishlist(product.id) ? 'text-pink-600 border' : 'text-gray-600 border'}`}
                         aria-label="Toggle wishlist"
                       >
                         <FaHeart />
+                        <span className="hidden sm:inline">Wishlist</span>
                       </button>
 
                       <button
                         onClick={() => {
                           toggleCompare(product);
-                          try { addToast(inCompare(product.id) ? `${product.name} removed from compare` : `${product.name} added to compare`, "info", 1500); } catch (e) {}
+                          try {
+                            addToast(
+                              inCompare(product.id)
+                                ? `${product.name} removed from compare`
+                                : `${product.name} added to compare`,
+                              "info",
+                              1500
+                            );
+                          } catch (e) {}
                         }}
-                        className={`p-2 rounded ${inCompare(product.id) ? 'text-indigo-600' : 'text-gray-600'}`}
+                        className={`px-3 py-2 rounded-md text-sm flex items-center gap-2 ${inCompare(product.id) ? 'text-indigo-600 border' : 'text-gray-600 border'}`}
                         aria-label="Toggle compare"
                       >
                         <FaBalanceScale />
+                        <span className="hidden sm:inline">Compare</span>
                       </button>
                     </div>
-                  </div>
+                    </div>
                 </motion.div>
               ))}
         </div>

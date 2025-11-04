@@ -123,12 +123,12 @@ export default function ProductDetailsPage() {
         {/* Left: Gallery */}
         <div className="md:col-span-7 bg-white rounded-lg p-6 shadow">
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-shrink-0 md:w-20 flex md:flex-col gap-3">
+            <div className="flex-shrink-0 md:w-20 flex md:flex-col gap-3 overflow-x-auto md:overflow-visible">
               {imageList.map((img: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => setMainImage(img)}
-                  className={`border rounded overflow-hidden w-20 h-20 md:w-20 md:h-20 flex items-center justify-center ${
+                  className={`flex-none border rounded overflow-hidden w-20 h-20 md:w-20 md:h-20 flex items-center justify-center ${
                     mainImage === img ? "ring-2 ring-green-500" : ""
                   }`}
                 >
@@ -142,7 +142,7 @@ export default function ProductDetailsPage() {
                 ref={imgRef}
                 src={mainImage || product?.image || "/placeholder.jpg"}
                 alt={product?.name}
-                className="w-full max-h-[600px] object-contain rounded-md shadow-lg"
+                className="w-full max-h-[420px] md:max-h-[600px] object-contain rounded-md shadow-lg"
               />
             </motion.div>
           </div>
@@ -162,7 +162,7 @@ export default function ProductDetailsPage() {
 
           <p className="text-gray-600 mb-4">{product?.description}</p>
 
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
             <div className="flex items-center border rounded">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -180,12 +180,11 @@ export default function ProductDetailsPage() {
                 <Plus size={16} />
               </button>
             </div>
-
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <button
                 onClick={() => handleAddToCart(false)}
                 disabled={adding || isInCart}
-                className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg shadow text-white font-medium ${
+                className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg shadow text-white font-medium w-full sm:w-auto justify-center ${
                   isInCart ? "bg-gray-400 cursor-not-allowed" : adding ? "bg-green-500" : "bg-green-600 hover:bg-green-700"
                 }`}
               >
@@ -196,13 +195,13 @@ export default function ProductDetailsPage() {
               <button
                 onClick={() => handleAddToCart(true)}
                 disabled={adding}
-                className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-green-600 text-green-600 font-medium hover:bg-green-50"
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-lg border border-green-600 text-green-600 font-medium hover:bg-green-50 w-full sm:w-auto justify-center"
               >
                 Buy now
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mt-3 sm:mt-0">
               <button
                 onClick={() => {
                   toggleWishlist(product as Product);
