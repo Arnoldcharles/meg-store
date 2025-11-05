@@ -192,7 +192,7 @@ export type Coupon =
 
 export const coupons: Record<string, Coupon> = {
   // 10% off entire order
-  MEG10: { code: "MEG10", type: "percent", value: 10, appliesTo: "order" },
+  MEG10: { code: "MEG10", type: "percent", value: 40, appliesTo: "order" },
   // 5% off Oil category
   OIL5: { code: "OIL5", type: "percent", value: 5, appliesTo: "category", category: "Oil" },
   // Flat 50 off specific product
