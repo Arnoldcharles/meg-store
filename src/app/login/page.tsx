@@ -48,7 +48,9 @@ export default function LoginPage() {
 
       if (isSignup) {
         await signup(email, password);
-        setMessage("Verification email sent. Please check your inbox/spam. Once verified, you can log in.");
+        setMessage(
+          "Verification email sent. Please check your inbox/spam. Once verified, you can log in."
+        );
         addToast("Verification email sent", "info", 3000);
       } else {
         await login(email, password);
@@ -56,7 +58,9 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       setError(err.message);
-      try { addToast(err.message || "Login error", "error", 3000); } catch(e){}
+      try {
+        addToast(err.message || "Login error", "error", 3000);
+      } catch (e) {}
     }
   };
 
@@ -66,7 +70,9 @@ export default function LoginPage() {
       addToast("Logged in with Google", "success", 2000);
     } catch (err: any) {
       setError(err.message);
-      try { addToast(err.message || "Google login failed", "error", 3000); } catch(e){}
+      try {
+        addToast(err.message || "Google login failed", "error", 3000);
+      } catch (e) {}
     }
   };
 
@@ -77,7 +83,9 @@ export default function LoginPage() {
       addToast("Verification email resent", "info", 2500);
     } catch (err: any) {
       setError(err.message);
-      try { addToast(err.message || "Resend failed", "error", 3000); } catch(e){}
+      try {
+        addToast(err.message || "Resend failed", "error", 3000);
+      } catch (e) {}
     }
   };
 
@@ -184,7 +192,12 @@ export default function LoginPage() {
                   Resend Email
                 </button>
                 <button
-                  onClick={() => { logout(); try { addToast("Logged out", "info", 2000); } catch(e){} }}
+                  onClick={() => {
+                    logout();
+                    try {
+                      addToast("Logged out", "info", 2000);
+                    } catch (e) {}
+                  }}
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400"
                 >
                   Logout

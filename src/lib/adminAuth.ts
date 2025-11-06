@@ -17,7 +17,8 @@ export async function assertAdmin(req: Request) {
   if (cookies.is_admin === "1") return true;
 
   const secret = req.headers.get("x-admin-secret");
-  if (secret && process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET) return true;
+  if (secret && process.env.ADMIN_SECRET && secret === process.env.ADMIN_SECRET)
+    return true;
 
   return false;
 }

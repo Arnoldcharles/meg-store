@@ -17,7 +17,6 @@ export default function Newsletter() {
       return;
     }
 
-    
     setTimeout(() => {
       setMessage("🎉 Thank you for subscribing!");
       setEmail("");
@@ -37,7 +36,8 @@ export default function Newsletter() {
           📩 Subscribe to our Newsletter
         </h2>
         <p className="mb-6 text-lg">
-          Get the latest deals, updates, and exclusive offers directly in your inbox.
+          Get the latest deals, updates, and exclusive offers directly in your
+          inbox.
         </p>
 
         <form

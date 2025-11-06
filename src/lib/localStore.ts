@@ -35,6 +35,8 @@ export function writeStore(name: string, data: any) {
 }
 
 export function generateId(prefix = "") {
-  const id = `${Date.now().toString(36)}-${Math.floor(Math.random() * 0xffff).toString(16)}`;
+  const id = `${Date.now().toString(36)}-${Math.floor(
+    Math.random() * 0xffff
+  ).toString(16)}`;
   return prefix ? `${prefix}_${id}` : id;
 }

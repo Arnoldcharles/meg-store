@@ -12,9 +12,7 @@ export function ProductSkeleton() {
 }
 
 export function HeroSkeleton() {
-  return (
-    <div className="w-full h-64 bg-gray-200 rounded-lg animate-pulse" />
-  );
+  return <div className="w-full h-64 bg-gray-200 rounded-lg animate-pulse" />;
 }
 
 export default ProductSkeleton;

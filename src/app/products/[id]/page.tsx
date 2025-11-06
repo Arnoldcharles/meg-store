@@ -3,7 +3,15 @@
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Star, ShoppingCart, Heart, Truck, Check, Minus, Plus } from "lucide-react";
+import {
+  Star,
+  ShoppingCart,
+  Heart,
+  Truck,
+  Check,
+  Minus,
+  Plus,
+} from "lucide-react";
 import { products } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
 import { useEffect, useState, useRef } from "react";
@@ -17,7 +25,7 @@ import PromoImageBanner from "@/components/PromoImageBanner";
 
 // Define a type for cart items that extends Product with quantity
 import type { Product } from "@/lib/products";
-type CartProduct = Product & { quantity: number }; 
+type CartProduct = Product & { quantity: number };
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -37,7 +45,9 @@ export default function ProductDetailsPage() {
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
-  const [mainImage, setMainImage] = useState<string | undefined>(product?.image);
+  const [mainImage, setMainImage] = useState<string | undefined>(
+    product?.image
+  );
   const imgRef = useRef<HTMLImageElement | null>(null);
   const { addToast } = useToast();
   const { toggle: toggleWishlist, contains: inWishlist } = useWishlist();
@@ -61,7 +71,9 @@ export default function ProductDetailsPage() {
     setMainImage(product?.image);
 
     // shuffle related products on each mount
-    const rel = products.filter((p) => p.category === product?.category && p.id !== id);
+    const rel = products.filter(
+      (p) => p.category === product?.category && p.id !== id
+    );
     for (let i = rel.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [rel[i], rel[j]] = [rel[j], rel[i]];
@@ -80,8 +92,13 @@ export default function ProductDetailsPage() {
       addToCart({ ...(product as Product), quantity } as CartProduct);
       // fly-to-cart and toast
       try {
-        const rect = imgRef.current ? imgRef.current.getBoundingClientRect() : null;
-        flyToCart(mainImage || product?.image || "/placeholder.jpg", rect as any);
+        const rect = imgRef.current
+          ? imgRef.current.getBoundingClientRect()
+          : null;
+        flyToCart(
+          mainImage || product?.image || "/placeholder.jpg",
+          rect as any
+        );
       } catch (e) {}
       try {
         addToast(`${product?.name} added to cart`, "success", 2000);
@@ -114,7 +131,9 @@ export default function ProductDetailsPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <nav className="text-sm text-gray-500 mb-6">
-        <Link href="/products" className="hover:underline">Products</Link>
+        <Link href="/products" className="hover:underline">
+          Products
+        </Link>
         <span className="mx-2">/</span>
         <span className="text-gray-700">{product?.name}</span>
       </nav>
@@ -132,7 +151,11 @@ export default function ProductDetailsPage() {
                     mainImage === img ? "ring-2 ring-green-500" : ""
                   }`}
                 >
-                  <img src={img} alt={`thumb-${idx}`} className="w-full h-full object-contain" />
+                  <img
+                    src={img}
+                    alt={`thumb-${idx}`}
+                    className="w-full h-full object-contain"
+                  />
                 </button>
               ))}
             </div>
@@ -153,12 +176,15 @@ export default function ProductDetailsPage() {
           <h1 className="text-2xl font-bold mb-2">{product?.name}</h1>
           <div className="flex items-center gap-3 mb-4">
             <div className="flex items-center text-yellow-400">
-              <Star size={16} /> <Star size={16} /> <Star size={16} /> <Star size={16} /> <Star size={16} />
+              <Star size={16} /> <Star size={16} /> <Star size={16} />{" "}
+              <Star size={16} /> <Star size={16} />
             </div>
             <span className="text-sm text-gray-500">4.9 · 1.2k reviews</span>
           </div>
 
-          <p className="text-3xl font-extrabold text-green-600 mb-4">₦{product?.price.toFixed(2)}</p>
+          <p className="text-3xl font-extrabold text-green-600 mb-4">
+            ₦{product?.price.toFixed(2)}
+          </p>
 
           <p className="text-gray-600 mb-4">{product?.description}</p>
 
@@ -185,7 +211,11 @@ export default function ProductDetailsPage() {
                 onClick={() => handleAddToCart(false)}
                 disabled={adding || isInCart}
                 className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg shadow text-white font-medium w-full sm:w-auto justify-center ${
-                  isInCart ? "bg-gray-400 cursor-not-allowed" : adding ? "bg-green-500" : "bg-green-600 hover:bg-green-700"
+                  isInCart
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : adding
+                    ? "bg-green-500"
+                    : "bg-green-600 hover:bg-green-700"
                 }`}
               >
                 <ShoppingCart size={16} />
@@ -205,9 +235,21 @@ export default function ProductDetailsPage() {
               <button
                 onClick={() => {
                   toggleWishlist(product as Product);
-                  try { addToast(inWishlist(product?.id || '') ? `${product?.name} removed from wishlist` : `${product?.name} added to wishlist`, 'info', 1600); } catch (e) {}
+                  try {
+                    addToast(
+                      inWishlist(product?.id || "")
+                        ? `${product?.name} removed from wishlist`
+                        : `${product?.name} added to wishlist`,
+                      "info",
+                      1600
+                    );
+                  } catch (e) {}
                 }}
-                className={`p-2 rounded ${inWishlist(product?.id || '') ? 'text-pink-600' : 'text-gray-600'}`}
+                className={`p-2 rounded ${
+                  inWishlist(product?.id || "")
+                    ? "text-pink-600"
+                    : "text-gray-600"
+                }`}
                 aria-label="Toggle wishlist"
               >
                 <Heart size={18} />
@@ -216,12 +258,36 @@ export default function ProductDetailsPage() {
               <button
                 onClick={() => {
                   toggleCompare(product as Product);
-                  try { addToast(inCompare(product?.id || '') ? `${product?.name} removed from compare` : `${product?.name} added to compare`, 'info', 1600); } catch (e) {}
+                  try {
+                    addToast(
+                      inCompare(product?.id || "")
+                        ? `${product?.name} removed from compare`
+                        : `${product?.name} added to compare`,
+                      "info",
+                      1600
+                    );
+                  } catch (e) {}
                 }}
-                className={`p-2 rounded ${inCompare(product?.id || '') ? 'text-indigo-600' : 'text-gray-600'}`}
+                className={`p-2 rounded ${
+                  inCompare(product?.id || "")
+                    ? "text-indigo-600"
+                    : "text-gray-600"
+                }`}
                 aria-label="Toggle compare"
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M6 6v14"/><path d="M18 6v14"/></svg>
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M6 6v14" />
+                  <path d="M18 6v14" />
+                </svg>
               </button>
             </div>
           </div>
@@ -231,7 +297,9 @@ export default function ProductDetailsPage() {
               <Truck size={18} />
               <div>
                 <div className="font-medium">Fast shipping</div>
-                <div className="text-xs text-gray-500">Delivered within 3–5 days</div>
+                <div className="text-xs text-gray-500">
+                  Delivered within 3–5 days
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -244,9 +312,16 @@ export default function ProductDetailsPage() {
           </div>
 
           <div className="border-t pt-4 text-sm text-gray-600">
-            <div className="mb-2"><span className="font-medium">Category:</span> <span className="capitalize">{product?.category}</span></div>
-            <div className="mb-2"><span className="font-medium">SKU:</span> {product?.id}</div>
-            <div className="mb-2"><span className="font-medium">Vendor:</span> Mega Store</div>
+            <div className="mb-2">
+              <span className="font-medium">Category:</span>{" "}
+              <span className="capitalize">{product?.category}</span>
+            </div>
+            <div className="mb-2">
+              <span className="font-medium">SKU:</span> {product?.id}
+            </div>
+            <div className="mb-2">
+              <span className="font-medium">Vendor:</span> Mega Store
+            </div>
           </div>
         </div>
       </div>
@@ -266,11 +341,19 @@ export default function ProductDetailsPage() {
               >
                 <Link href={`/products/${item.id}`}>
                   <div className="w-full h-40 flex items-center justify-center mb-3">
-                    <Image src={item.image || "/placeholder.jpg"} alt={item.name} width={200} height={160} className="object-contain" />
+                    <Image
+                      src={item.image || "/placeholder.jpg"}
+                      alt={item.name}
+                      width={200}
+                      height={160}
+                      className="object-contain"
+                    />
                   </div>
                   <h3 className="font-medium">{item.name}</h3>
                   <p className="text-sm text-gray-500">{item.category}</p>
-                  <p className="mt-2 font-semibold text-green-600">₦ {item.price.toFixed(2)}</p>
+                  <p className="mt-2 font-semibold text-green-600">
+                    ₦ {item.price.toFixed(2)}
+                  </p>
                 </Link>
               </motion.div>
             ))}

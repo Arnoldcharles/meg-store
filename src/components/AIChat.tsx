@@ -18,7 +18,9 @@ export default function AIChat({ full }: { full?: boolean }) {
   const [showToast, setShowToast] = useState(false);
   const [backupMessages, setBackupMessages] = useState<Message[] | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [pendingClearType, setPendingClearType] = useState<"all" | "results" | null>(null);
+  const [pendingClearType, setPendingClearType] = useState<
+    "all" | "results" | null
+  >(null);
   const [backupResults, setBackupResults] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const { addToCart } = useCart();
@@ -65,7 +67,7 @@ export default function AIChat({ full }: { full?: boolean }) {
     const text = input.trim();
     if (!text) return;
 
-  const userMsg: Message = { id: uniqueId("u"), role: "user", text };
+    const userMsg: Message = { id: uniqueId("u"), role: "user", text };
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setLoading(true);
@@ -81,37 +83,63 @@ export default function AIChat({ full }: { full?: boolean }) {
         throw new Error(`API error: ${res.status} ${textErr}`);
       }
       const data = await res.json();
-  const reply = data?.reply || "Sorry, I couldn't generate a response.";
-  const ingredients = Array.isArray(data?.ingredients) ? data.ingredients : undefined;
+      const reply = data?.reply || "Sorry, I couldn't generate a response.";
+      const ingredients = Array.isArray(data?.ingredients)
+        ? data.ingredients
+        : undefined;
 
       // If structured results are returned, append them as a special assistant message
       if (ingredients && ingredients.length > 0) {
-        const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
+        const assistantMsg: Message = {
+          id: uniqueId("a"),
+          role: "assistant",
+          text: reply,
+        };
         setMessages((m) => [...m, assistantMsg]);
         setTimeout(() => {
           setMessages((m) => [
             ...m,
-            { id: uniqueId("ing"), role: "assistant", text: JSON.stringify({ ingredients }) },
+            {
+              id: uniqueId("ing"),
+              role: "assistant",
+              text: JSON.stringify({ ingredients }),
+            },
           ]);
         }, 50);
       } else if (Array.isArray(data?.results) && data.results.length > 0) {
-        const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
+        const assistantMsg: Message = {
+          id: uniqueId("a"),
+          role: "assistant",
+          text: reply,
+        };
         setMessages((m) => [...m, assistantMsg]);
         // Append a pseudo-message for results (client will render results from latest API response state)
         setTimeout(() => {
           setMessages((m) => [
             ...m,
-            { id: uniqueId("r"), role: "assistant", text: JSON.stringify(data.results) },
+            {
+              id: uniqueId("r"),
+              role: "assistant",
+              text: JSON.stringify(data.results),
+            },
           ]);
         }, 50);
       } else {
-  const assistantMsg: Message = { id: uniqueId("a"), role: "assistant", text: reply };
-  setMessages((m) => [...m, assistantMsg]);
+        const assistantMsg: Message = {
+          id: uniqueId("a"),
+          role: "assistant",
+          text: reply,
+        };
+        setMessages((m) => [...m, assistantMsg]);
       }
     } catch (err: any) {
-        setMessages((m) => [
+      setMessages((m) => [
         ...m,
-        { id: uniqueId("a-err"), role: "assistant", text: err?.message || "There was an error contacting the AI service." },
+        {
+          id: uniqueId("a-err"),
+          role: "assistant",
+          text: err?.message || "There was an error contacting the AI service.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -199,7 +227,11 @@ export default function AIChat({ full }: { full?: boolean }) {
         try {
           const parsed = JSON.parse(m.text);
           if (Array.isArray(parsed)) return true;
-          if (parsed && (Array.isArray(parsed.results) || Array.isArray(parsed.ingredients))) return true;
+          if (
+            parsed &&
+            (Array.isArray(parsed.results) || Array.isArray(parsed.ingredients))
+          )
+            return true;
         } catch (e) {
           // not JSON
         }
@@ -248,10 +280,15 @@ export default function AIChat({ full }: { full?: boolean }) {
           }
 
           return (
-            <div key={m.id} className={m.role === "user" ? "text-right" : "text-left"}>
+            <div
+              key={m.id}
+              className={m.role === "user" ? "text-right" : "text-left"}
+            >
               <div
                 className={`inline-block px-3 py-2 rounded-lg text-sm ${
-                  m.role === "user" ? "bg-green-600 text-white" : "bg-white text-gray-800"
+                  m.role === "user"
+                    ? "bg-green-600 text-white"
+                    : "bg-white text-gray-800"
                 } shadow`}
               >
                 {isResults ? "Search results:" : m.text}
@@ -260,46 +297,81 @@ export default function AIChat({ full }: { full?: boolean }) {
               {isResults && (
                 <>
                   {/* If the parsed message contains ingredients specifically, render ingredient chips first */}
-                  {Array.isArray(results) && results.length > 0 && results[0]?.qty && (
-                    <div className="mb-3 grid grid-cols-1 gap-2">
-                      <div className="flex justify-end mb-2">
-                        <button
-                          onClick={() => {
-                            // add all ingredients to cart
-                            for (const ing of results) {
-                              try {
-                                // add with parsed qty: if qty contains a number, use it, otherwise default 1
-                                const numMatch = String(ing.qty).match(/(\d+)/);
-                                const q = numMatch ? Math.max(1, Number(numMatch[1])) : 1;
-                                addToCart({ id: ing.id, name: ing.name, image: ing.image || "", description: ing.name, price: ing.price, category: ing.category, stock: ing.stock } as any, q);
-                              } catch (e) {
-                                // ignore add errors
+                  {Array.isArray(results) &&
+                    results.length > 0 &&
+                    results[0]?.qty && (
+                      <div className="mb-3 grid grid-cols-1 gap-2">
+                        <div className="flex justify-end mb-2">
+                          <button
+                            onClick={() => {
+                              // add all ingredients to cart
+                              for (const ing of results) {
+                                try {
+                                  // add with parsed qty: if qty contains a number, use it, otherwise default 1
+                                  const numMatch = String(ing.qty).match(
+                                    /(\d+)/
+                                  );
+                                  const q = numMatch
+                                    ? Math.max(1, Number(numMatch[1]))
+                                    : 1;
+                                  addToCart(
+                                    {
+                                      id: ing.id,
+                                      name: ing.name,
+                                      image: ing.image || "",
+                                      description: ing.name,
+                                      price: ing.price,
+                                      category: ing.category,
+                                      stock: ing.stock,
+                                    } as any,
+                                    q
+                                  );
+                                } catch (e) {
+                                  // ignore add errors
+                                }
                               }
-                            }
-                          }}
-                          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
-                          Add all ingredients to cart
-                        </button>
-                      </div>
-                      {results.map((ing) => (
-                        <div key={ing.id} className="flex items-center gap-3 bg-white p-2 rounded shadow-sm">
-                          <div className="w-10 h-10 relative">
-                            <Image src={ing.image || "/file.svg"} alt={ing.name} fill className="object-cover rounded" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">{ing.name}</div>
-                            <div className="text-xs text-gray-500">{ing.qty} • ₦{ing.price}</div>
-                          </div>
-                          <Link href={`/products/${ing.id}`} className="text-green-600 underline">View</Link>
+                            }}
+                            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                          >
+                            Add all ingredients to cart
+                          </button>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        {results.map((ing) => (
+                          <div
+                            key={ing.id}
+                            className="flex items-center gap-3 bg-white p-2 rounded shadow-sm"
+                          >
+                            <div className="w-10 h-10 relative">
+                              <Image
+                                src={ing.image || "/file.svg"}
+                                alt={ing.name}
+                                fill
+                                className="object-cover rounded"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-medium">{ing.name}</div>
+                              <div className="text-xs text-gray-500">
+                                {ing.qty} • ₦{ing.price}
+                              </div>
+                            </div>
+                            <Link
+                              href={`/products/${ing.id}`}
+                              className="text-green-600 underline"
+                            >
+                              View
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                   <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
                     {results.map((r) => (
-                      <div key={r.id} className="bg-white rounded-lg shadow-sm overflow-hidden flex">
+                      <div
+                        key={r.id}
+                        className="bg-white rounded-lg shadow-sm overflow-hidden flex"
+                      >
                         <div className="w-28 h-28 relative">
                           <Image
                             src={r.image || "/file.svg"}
@@ -311,17 +383,37 @@ export default function AIChat({ full }: { full?: boolean }) {
                         </div>
                         <div className="p-3 flex-1 flex flex-col justify-between">
                           <div>
-                            <div className="font-semibold text-gray-800">{r.name}</div>
-                            <div className="text-sm text-gray-500">{r.category}</div>
+                            <div className="font-semibold text-gray-800">
+                              {r.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {r.category}
+                            </div>
                           </div>
                           <div className="flex items-center justify-between mt-2">
                             <div className="flex items-center gap-3">
-                              <div className="bg-green-50 text-green-700 font-bold px-2 py-1 rounded">₦{r.price}</div>
-                              <div className="text-xs text-gray-400">stock: {r.stock}</div>
+                              <div className="bg-green-50 text-green-700 font-bold px-2 py-1 rounded">
+                                ₦{r.price}
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                stock: {r.stock}
+                              </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Link href={`/products/${r.id}`} className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm">View product</Link>
-                              <a href={`/products/${r.id}`} target="_blank" rel="noreferrer" className="text-xs text-gray-500 underline">Open</a>
+                              <Link
+                                href={`/products/${r.id}`}
+                                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                              >
+                                View product
+                              </Link>
+                              <a
+                                href={`/products/${r.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs text-gray-500 underline"
+                              >
+                                Open
+                              </a>
                             </div>
                           </div>
                         </div>
@@ -374,32 +466,69 @@ export default function AIChat({ full }: { full?: boolean }) {
           <div>Cleared</div>
           {pendingClearType === "results" ? (
             <>
-              <button onClick={undoClearResults} className="bg-white text-gray-900 px-2 py-1 rounded text-sm">Undo</button>
+              <button
+                onClick={undoClearResults}
+                className="bg-white text-gray-900 px-2 py-1 rounded text-sm"
+              >
+                Undo
+              </button>
             </>
           ) : (
             <>
-              <button onClick={undoClear} className="bg-white text-gray-900 px-2 py-1 rounded text-sm">Undo</button>
+              <button
+                onClick={undoClear}
+                className="bg-white text-gray-900 px-2 py-1 rounded text-sm"
+              >
+                Undo
+              </button>
             </>
           )}
-          <button onClick={() => setShowToast(false)} className="text-gray-300 hover:text-white text-sm">✕</button>
+          <button
+            onClick={() => setShowToast(false)}
+            className="text-gray-300 hover:text-white text-sm"
+          >
+            ✕
+          </button>
         </div>
       )}
 
       {/* Confirmation modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black opacity-40" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-black opacity-40"
+            onClick={() => setShowModal(false)}
+          />
           <div className="bg-white rounded-lg p-6 z-50 shadow-lg w-full max-w-md">
             <h3 className="text-lg font-semibold mb-2">Confirm</h3>
-            <p className="text-sm text-gray-600 mb-4">Are you sure you want to clear {pendingClearType === "results" ? "the saved results" : "your chat history"}? This action can be undone briefly with Undo.</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Are you sure you want to clear{" "}
+              {pendingClearType === "results"
+                ? "the saved results"
+                : "your chat history"}
+              ? This action can be undone briefly with Undo.
+            </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => { setShowModal(false); setPendingClearType(null); }} className="px-3 py-1 rounded border">Cancel</button>
-              <button onClick={() => {
-                setShowModal(false);
-                if (pendingClearType === "results") clearResultsOnly(false);
-                else clearHistory(false);
-                setPendingClearType(null);
-              }} className="px-3 py-1 rounded bg-red-600 text-white">Yes, clear</button>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setPendingClearType(null);
+                }}
+                className="px-3 py-1 rounded border"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  if (pendingClearType === "results") clearResultsOnly(false);
+                  else clearHistory(false);
+                  setPendingClearType(null);
+                }}
+                className="px-3 py-1 rounded bg-red-600 text-white"
+              >
+                Yes, clear
+              </button>
             </div>
           </div>
         </div>

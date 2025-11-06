@@ -17,7 +17,11 @@ const MAX_COMPARE = 4;
 
 const CompareContext = createContext<CompareContextType | undefined>(undefined);
 
-export const CompareProvider = ({ children }: { children: React.ReactNode }) => {
+export const CompareProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [items, setItems] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -43,10 +47,15 @@ export const CompareProvider = ({ children }: { children: React.ReactNode }) => 
     });
   };
 
-  const remove = (id: string) => setItems((prev) => prev.filter((p) => p.id !== id));
+  const remove = (id: string) =>
+    setItems((prev) => prev.filter((p) => p.id !== id));
 
   const toggle = (p: Product) => {
-    setItems((prev) => (prev.find((x) => x.id === p.id) ? prev.filter((x) => x.id !== p.id) : [...(prev.length >= MAX_COMPARE ? prev.slice(1) : prev), p]));
+    setItems((prev) =>
+      prev.find((x) => x.id === p.id)
+        ? prev.filter((x) => x.id !== p.id)
+        : [...(prev.length >= MAX_COMPARE ? prev.slice(1) : prev), p]
+    );
   };
 
   const contains = (id: string) => items.some((i) => i.id === id);
@@ -56,7 +65,9 @@ export const CompareProvider = ({ children }: { children: React.ReactNode }) => 
   const getCount = () => items.length;
 
   return (
-    <CompareContext.Provider value={{ items, add, remove, toggle, contains, clear, getCount }}>
+    <CompareContext.Provider
+      value={{ items, add, remove, toggle, contains, clear, getCount }}
+    >
       {children}
     </CompareContext.Provider>
   );

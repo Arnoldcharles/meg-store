@@ -20,8 +20,8 @@ export default function PromoBanner() {
             🛒 Limited Time Offer!
           </h2>
           <p className="mt-3 text-lg md:text-xl">
-            Get <span className="font-bold">30% OFF</span> on all fresh groceries.
-            Hurry, offer ends soon!
+            Get <span className="font-bold">30% OFF</span> on all fresh
+            groceries. Hurry, offer ends soon!
           </p>
           <Link
             href="/products/967890127"

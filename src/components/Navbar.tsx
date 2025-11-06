@@ -8,7 +8,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useToast } from "@/components/ToastProvider";
-import { FaShoppingCart, FaUser, FaHome, FaBox, FaRobot, FaHeart, FaBalanceScale } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaUser,
+  FaHome,
+  FaBox,
+  FaRobot,
+  FaHeart,
+  FaBalanceScale,
+} from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,7 +30,8 @@ export default function Navbar() {
   const [active, setActive] = useState("home");
   const [isAdminSession, setIsAdminSession] = useState(false);
 
-  const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "arnoldcharles028@gmail.com";
+  const ADMIN_EMAIL =
+    process.env.NEXT_PUBLIC_ADMIN_EMAIL || "arnoldcharles028@gmail.com";
 
   // Sync active nav with route
   useEffect(() => {
@@ -46,7 +55,6 @@ export default function Navbar() {
       setIsAdminSession(false);
     }
   }, [user]);
-
 
   if (isAdminSession) return null;
 
@@ -130,7 +138,7 @@ export default function Navbar() {
                 </motion.span>
               )}
             </Link>
-            {user ? (
+            {/*{user ? (
               <button
                 onClick={() => {
                   logout();
@@ -149,12 +157,12 @@ export default function Navbar() {
               >
                 Login
               </Link>
-            )}
+            )}*/}
           </div>
 
           {/* Mobile Auth (Login/Logout) */}
           <div className="md:hidden">
-            {user ? (
+            {/*{user ? (
               <button
                 onClick={() => {
                   logout();
@@ -173,7 +181,7 @@ export default function Navbar() {
               >
                 Login
               </Link>
-            )}
+            )}*/}
           </div>
         </div>
       </nav>
@@ -189,7 +197,10 @@ export default function Navbar() {
             aria-label="Home"
             title="Home"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
+            >
               <FaHome
                 className={`w-6 h-6 ${
                   active === "home" ? "text-yellow-300" : "text-white"
@@ -215,7 +226,10 @@ export default function Navbar() {
             aria-label="Products"
             title="Products"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
+            >
               <FaBox
                 className={`w-6 h-6 ${
                   active === "products" ? "text-yellow-300" : "text-white"
@@ -241,9 +255,14 @@ export default function Navbar() {
             aria-label="Wishlist"
             title="Wishlist"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
+            >
               <FaHeart
-                className={`w-6 h-6 ${active === "wishlist" ? "text-yellow-300" : "text-white"}`}
+                className={`w-6 h-6 ${
+                  active === "wishlist" ? "text-yellow-300" : "text-white"
+                }`}
               />
               {getWishlistCount() > 0 && (
                 <motion.span className="absolute -top-1 -right-3 bg-pink-500 text-white text-xs font-bold px-2 rounded-full">
@@ -271,7 +290,10 @@ export default function Navbar() {
             aria-label="Cart"
             title="Cart"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="relative flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="relative flex flex-col items-center"
+            >
               <FaShoppingCart
                 className={`w-6 h-6 ${
                   active === "cart" ? "text-yellow-300" : "text-white"
@@ -300,34 +322,39 @@ export default function Navbar() {
             )}
           </Link>
 
-            {/* Compare (Mobile) */}
-            <Link
-              href="/compare"
-              onClick={() => setActive("compare")}
-              className="relative flex flex-col items-center"
-              aria-label="Compare"
-              title="Compare"
+          {/* Compare (Mobile) */}
+          <Link
+            href="/compare"
+            onClick={() => setActive("compare")}
+            className="relative flex flex-col items-center"
+            aria-label="Compare"
+            title="Compare"
+          >
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
             >
-              <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
-                <FaBalanceScale
-                  className={`w-6 h-6 ${active === "compare" ? "text-yellow-300" : "text-white"}`}
-                />
-                {getCompareCount() > 0 && (
-                  <motion.span className="absolute -top-1 -right-3 bg-indigo-500 text-white text-xs font-bold px-2 rounded-full">
-                    {getCompareCount()}
-                  </motion.span>
-                )}
-              </motion.div>
-              {active === "compare" && (
-                <motion.span
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-xs mt-1"
-                >
-                  Compare
+              <FaBalanceScale
+                className={`w-6 h-6 ${
+                  active === "compare" ? "text-yellow-300" : "text-white"
+                }`}
+              />
+              {getCompareCount() > 0 && (
+                <motion.span className="absolute -top-1 -right-3 bg-indigo-500 text-white text-xs font-bold px-2 rounded-full">
+                  {getCompareCount()}
                 </motion.span>
               )}
-            </Link>
+            </motion.div>
+            {active === "compare" && (
+              <motion.span
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs mt-1"
+              >
+                Compare
+              </motion.span>
+            )}
+          </Link>
 
           {/* Account */}
           <Link
@@ -337,7 +364,10 @@ export default function Navbar() {
             aria-label="About"
             title="About"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
+            >
               <FaUser
                 className={`w-6 h-6 ${
                   active === "about" ? "text-yellow-300" : "text-white"
@@ -362,9 +392,14 @@ export default function Navbar() {
             aria-label="AI Assistant"
             title="AI Assistant"
           >
-            <motion.div whileTap={{ scale: 0.9 }} className="flex flex-col items-center">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex flex-col items-center"
+            >
               <FaRobot
-                className={`w-6 h-6 ${active === "ai" ? "text-yellow-300" : "text-white"}`}
+                className={`w-6 h-6 ${
+                  active === "ai" ? "text-yellow-300" : "text-white"
+                }`}
               />
               {active === "ai" && (
                 <motion.span

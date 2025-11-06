@@ -13,9 +13,15 @@ type WishlistContextType = {
   getCount: () => number;
 };
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined
+);
 
-export const WishlistProvider = ({ children }: { children: React.ReactNode }) => {
+export const WishlistProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [items, setItems] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -43,7 +49,11 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const toggle = (p: Product) => {
-    setItems((prev) => (prev.find((x) => x.id === p.id) ? prev.filter((x) => x.id !== p.id) : [...prev, p]));
+    setItems((prev) =>
+      prev.find((x) => x.id === p.id)
+        ? prev.filter((x) => x.id !== p.id)
+        : [...prev, p]
+    );
   };
 
   const contains = (id: string) => items.some((i) => i.id === id);
@@ -53,7 +63,9 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   const getCount = () => items.length;
 
   return (
-    <WishlistContext.Provider value={{ items, add, remove, toggle, contains, clear, getCount }}>
+    <WishlistContext.Provider
+      value={{ items, add, remove, toggle, contains, clear, getCount }}
+    >
       {children}
     </WishlistContext.Provider>
   );

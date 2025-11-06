@@ -40,16 +40,24 @@ export default function OrderDetail(props: any) {
         <div className="flex justify-between">
           <div>
             <div className="font-semibold">Placed</div>
-            <div className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleString()}</div>
+            <div className="text-sm text-gray-500">
+              {new Date(order.createdAt).toLocaleString()}
+            </div>
           </div>
           <div>
             <div className="font-semibold">Total</div>
-            <div className="text-green-600 font-bold">₦{order.total.toFixed(2)}</div>
+            <div className="text-green-600 font-bold">
+              ₦{order.total.toFixed(2)}
+            </div>
             {order.subtotal !== undefined && (
-              <div className="text-sm text-gray-500">Subtotal: ₦{order.subtotal.toFixed(2)}</div>
+              <div className="text-sm text-gray-500">
+                Subtotal: ₦{order.subtotal.toFixed(2)}
+              </div>
             )}
             {order.deliveryFee !== undefined && (
-              <div className="text-sm text-gray-500">Delivery: ₦{order.deliveryFee.toFixed(2)}</div>
+              <div className="text-sm text-gray-500">
+                Delivery: ₦{order.deliveryFee.toFixed(2)}
+              </div>
             )}
           </div>
         </div>
@@ -60,10 +68,20 @@ export default function OrderDetail(props: any) {
         <div className="space-y-3">
           {steps.map((s, idx) => (
             <div key={s.key} className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${idx <= currentIndex ? "bg-green-600" : "bg-gray-300"}`} />
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  idx <= currentIndex ? "bg-green-600" : "bg-gray-300"
+                }`}
+              />
               <div>
                 <div className="font-medium">{s.label}</div>
-                <div className="text-sm text-gray-500">{idx <= currentIndex ? new Date(order.createdAt + idx * 3600 * 1000).toLocaleString() : "Pending"}</div>
+                <div className="text-sm text-gray-500">
+                  {idx <= currentIndex
+                    ? new Date(
+                        order.createdAt + idx * 3600 * 1000
+                      ).toLocaleString()
+                    : "Pending"}
+                </div>
               </div>
             </div>
           ))}
@@ -75,8 +93,12 @@ export default function OrderDetail(props: any) {
         <ul className="space-y-2">
           {order.items.map((it) => (
             <li key={it.id} className="flex justify-between">
-              <div>{it.name} x{it.quantity}</div>
-              <div className="font-semibold">₦{(it.price * it.quantity).toFixed(2)}</div>
+              <div>
+                {it.name} x{it.quantity}
+              </div>
+              <div className="font-semibold">
+                ₦{(it.price * it.quantity).toFixed(2)}
+              </div>
             </li>
           ))}
         </ul>

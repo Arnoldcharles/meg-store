@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
 import { uniqueId } from "@/lib/uid";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -29,14 +35,22 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = useCallback((message: string, type: Toast["type"] = "info", duration = 6000, action: Toast["action"] = null) => {
-    const id = uniqueId("t");
-    const t: Toast = { id, message, type, duration, action };
-    setToasts((s) => [t, ...s]);
-    setTimeout(() => {
-      setToasts((s) => s.filter((x) => x.id !== id));
-    }, duration);
-  }, []);
+  const addToast = useCallback(
+    (
+      message: string,
+      type: Toast["type"] = "info",
+      duration = 6000,
+      action: Toast["action"] = null
+    ) => {
+      const id = uniqueId("t");
+      const t: Toast = { id, message, type, duration, action };
+      setToasts((s) => [t, ...s]);
+      setTimeout(() => {
+        setToasts((s) => s.filter((x) => x.id !== id));
+      }, duration);
+    },
+    []
+  );
 
   return (
     <ToastContext.Provider value={{ addToast }}>
@@ -53,7 +67,11 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
               exit={{ opacity: 0, y: 8, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 700, damping: 30 }}
               className={`pointer-events-auto max-w-sm px-4 py-3 rounded-lg shadow-lg text-white ${
-                t.type === "success" ? "bg-green-600" : t.type === "error" ? "bg-red-600" : "bg-gray-800"
+                t.type === "success"
+                  ? "bg-green-600"
+                  : t.type === "error"
+                  ? "bg-red-600"
+                  : "bg-gray-800"
               }`}
             >
               <div className="flex items-start justify-between gap-4">

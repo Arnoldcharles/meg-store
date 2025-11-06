@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import { useToast } from "@/components/ToastProvider";
 import { Product } from "@/lib/products";
 import { calculateDeliveryFee } from "@/lib/shipping";
@@ -73,7 +79,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             const exists = cur.find((c) => c.id === removed.id);
             if (exists) {
               return cur.map((c) =>
-                c.id === removed.id ? { ...c, quantity: c.quantity + removed.quantity } : c
+                c.id === removed.id
+                  ? { ...c, quantity: c.quantity + removed.quantity }
+                  : c
               );
             }
             // re-insert removed item at front
@@ -91,9 +99,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id ? { ...item, quantity } : item
-      )
+      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
   };
 

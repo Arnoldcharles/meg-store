@@ -1,10 +1,15 @@
 export default function flyToCart(imageSrc: string, fromRect: DOMRect | null) {
   try {
     if (!fromRect) return;
-    const cartEl = document.querySelector('[data-cart-icon]');
+    const cartEl = document.querySelector("[data-cart-icon]");
     const toRect = cartEl
       ? cartEl.getBoundingClientRect()
-      : ({ x: window.innerWidth - 48, y: 24, width: 32, height: 32 } as DOMRect);
+      : ({
+          x: window.innerWidth - 48,
+          y: 24,
+          width: 32,
+          height: 32,
+        } as DOMRect);
 
     const img = document.createElement("img");
     img.src = imageSrc;
@@ -27,7 +32,12 @@ export default function flyToCart(imageSrc: string, fromRect: DOMRect | null) {
 
     const keyframes: Keyframe[] = [
       { transform: `translate(0px, 0px) scale(1) rotate(0deg)`, opacity: 1 },
-      { transform: `translate(${destX - fromRect.left}px, ${destY - fromRect.top}px) scale(0.18) rotate(20deg)`, opacity: 0.85 },
+      {
+        transform: `translate(${destX - fromRect.left}px, ${
+          destY - fromRect.top
+        }px) scale(0.18) rotate(20deg)`,
+        opacity: 0.85,
+      },
     ];
 
     const anim = img.animate(keyframes, {
@@ -37,7 +47,8 @@ export default function flyToCart(imageSrc: string, fromRect: DOMRect | null) {
 
     // play a short pop sound using WebAudio (no external file)
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = "sine";
@@ -47,8 +58,12 @@ export default function flyToCart(imageSrc: string, fromRect: DOMRect | null) {
       gain.connect(ctx.destination);
       osc.start();
       setTimeout(() => {
-        try { osc.stop(); } catch (e) {}
-        try { ctx.close(); } catch (e) {}
+        try {
+          osc.stop();
+        } catch (e) {}
+        try {
+          ctx.close();
+        } catch (e) {}
       }, 120);
     } catch (e) {
       // ignore audio errors
@@ -64,7 +79,10 @@ export default function flyToCart(imageSrc: string, fromRect: DOMRect | null) {
           cartEl.animate(
             [
               { transform: "scale(1)", boxShadow: "0 0 0 rgba(0,0,0,0)" },
-              { transform: "scale(1.12)", boxShadow: "0 8px 20px rgba(0,0,0,0.12)" },
+              {
+                transform: "scale(1.12)",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+              },
               { transform: "scale(1)", boxShadow: "0 0 0 rgba(0,0,0,0)" },
             ],
             { duration: 300, easing: "ease-out" }

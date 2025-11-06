@@ -1,4 +1,12 @@
-import { LucideIcon, Apple, Beef, Milk, Soup, CupSoda, ShoppingBasket } from "lucide-react";
+import {
+  LucideIcon,
+  Apple,
+  Beef,
+  Milk,
+  Soup,
+  CupSoda,
+  ShoppingBasket,
+} from "lucide-react";
 
 export type Category = {
   name: string;

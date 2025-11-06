@@ -32,7 +32,9 @@ export default function FeaturedCategories() {
               <div className="w-16 h-16 flex items-center justify-center bg-green-200 rounded-full mb-3">
                 <cat.icon className="w-8 h-8 text-gray-700" />
               </div>
-              <p className="font-medium text-gray-800 text-center">{cat.name}</p>
+              <p className="font-medium text-gray-800 text-center">
+                {cat.name}
+              </p>
             </Link>
           </motion.div>
         ))}
@@ -55,7 +57,9 @@ export default function FeaturedCategories() {
               <div className="w-16 h-16 flex items-center justify-center bg-green-200 rounded-full mb-3">
                 <cat.icon className="w-8 h-8 text-gray-700" />
               </div>
-              <p className="font-medium text-gray-800 text-center">{cat.name}</p>
+              <p className="font-medium text-gray-800 text-center">
+                {cat.name}
+              </p>
             </Link>
           </motion.div>
         ))}

@@ -8,7 +8,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 export async function POST(req: NextRequest) {
   try {
- 
     const data = await req.json();
     const {
       customer_name,
@@ -39,6 +38,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Email sent successfully" });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to send message" },
+      { status: 500 }
+    );
   }
 }

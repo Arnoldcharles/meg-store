@@ -58,8 +58,12 @@ export default function ProductQuickView({
           <div className="flex-1">
             <h3 className="text-xl font-bold">{product.name}</h3>
             <p className="text-sm text-gray-600 my-2">{product.category}</p>
-            <p className="text-lg font-semibold text-green-600">₦{product.price}</p>
-            <p className="mt-4 text-gray-700">{product.description || "No description available."}</p>
+            <p className="text-lg font-semibold text-green-600">
+              ₦{product.price}
+            </p>
+            <p className="mt-4 text-gray-700">
+              {product.description || "No description available."}
+            </p>
 
             <div className="mt-6 flex gap-3">
               <button
