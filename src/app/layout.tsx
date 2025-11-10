@@ -1,3 +1,5 @@
+"use client";
+
 import "./globals.css";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
@@ -11,8 +13,23 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Meg Store",
-  description: "Modern e-commerce store",
+  description: "Your One stop shop for all things grocery!",
 };
+<>
+  <meta property="og:site_name" content="Meg Store" />
+  <meta property="og:title" content="Meg Store" />
+  <meta
+    property="og:description"
+    content="Your One stop shop for all things grocery!"
+  />
+  <meta property="og:url" content="https://meg-store.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <meta
+    property="icon"
+    content="https://meg-store.vercel.app/hero4.png"
+  />
+  <meta property="og:image" content="https://meg-store.vercel.app/hero4.png" />
+</>;
 
 export default function RootLayout({
   children,
